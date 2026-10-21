@@ -1,0 +1,15 @@
+# File sementara & kunci dokumen Office
+~$*
+*.tmp
+*.bak
+
+# Sistem Operasi & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dependencies & Build
+node_modules/
+dist/
+.wrangler/
