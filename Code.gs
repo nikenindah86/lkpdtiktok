@@ -1,7 +1,15 @@
 /**
- * LKPD Digital — Membuat Konten Media Sosial TikTok (Kelas X Fase E)
- * Versi: 2.0.0 — backend Google Apps Script + Google Sheets
- * Terhubung penuh ke Google Sheets secara Real-Time & Kompatibel dengan Cloudflare Pages + Worker.
+ * LKPD Digital - Membuat Konten Media Sosial TikTok (Kelas X Fase E)
+ * Versi: 2.0.0 - backend Google Apps Script + Google Sheets
+ * Terhubung penuh ke Google Sheets secara Real-Time & Kompatibel dengan Cloudflare Pages.
+ * 
+ * INSTALLASI:
+ * 1. Buka spreadsheet Google Sheets target
+ * 2. Klik menu Extensions > Apps Script
+ * 3. Hapus kode lama, paste seluruh kode ini
+ * 4. Klik Simpan / Save
+ * 5. Muat ulang Google Sheets (menu kustom "LKPD TikTok" akan muncul)
+ * 6. Klik Deploy > Manage deployments > Edit > New version > Deploy untuk memperbarui Web App
  */
 
 // === BOILERPLATE: KONFIGURASI DAN STRUKTUR DATABASE ===
@@ -328,7 +336,9 @@ function init6Kelompok36Siswa(payload) {
   return apiCall_(function () {
     const ss = getDatabaseSpreadsheet_(false);
     const forceReset = payload && payload.forceReset === true;
-    return init6Kelompok36SiswaInternal_(ss, forceReset);
+    return withScriptLock_(function () {
+      return init6Kelompok36SiswaInternal_(ss, forceReset);
+    });
   });
 }
 
@@ -400,6 +410,9 @@ function init6Kelompok36SiswaInternal_(ss, forceReset) {
     'Wisnu Wardhana', 'Yoga Pratama', 'Zahra Amelia', 'Zidan Firdaus', 'Alifia Zahra', 'Bagas Kurniawan'
   ];
 
+  // Baca daftar pengguna satu kali di luar perulangan (Batch Reading)
+  const existingUsers = forceReset ? [] : readRows_('Pengguna');
+
   for (let i = 1; i <= 36; i++) {
     const padNum = (i < 10 ? '0' : '') + i;
     const userId = 'USR-SISWA-' + padNum;
@@ -407,10 +420,9 @@ function init6Kelompok36SiswaInternal_(ss, forceReset) {
     const targetGroup = groupDefs[groupIdx];
     const defaultName = starterNames[i - 1] || ('Siswa ' + padNum);
 
-    // Cek apakah pengguna sudah ada jika bukan forceReset
+    // Ambil nama dari data yang sudah ada bila bukan forceReset
     let studentName = defaultName;
-    if (!forceReset) {
-      const existingUsers = readRows_('Pengguna');
+    if (!forceReset && existingUsers.length > 0) {
       const found = existingUsers.find(function (u) { return String(u.userId) === userId; });
       if (found && found.nama) studentName = found.nama;
     }

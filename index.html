@@ -35,7 +35,11 @@
       --radius: 16px;
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      width: 100%;
+    }
     body {
       margin: 0;
       background: var(--bg);
@@ -43,6 +47,8 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 14px;
       line-height: 1.5;
+      overflow-x: hidden;
+      width: 100%;
     }
     button, input, textarea, select { font: inherit; }
     button { cursor: pointer; }
@@ -50,7 +56,13 @@
       outline: 2px solid var(--cyan);
       outline-offset: 2px;
     }
-    .app { min-height: 100vh; display: flex; flex-direction: column; }
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      overflow-x: hidden;
+    }
     
     /* TOPBAR */
     /* TOPBAR */
@@ -221,8 +233,8 @@
     .db-status-box p { margin: 0; color: #006A66; line-height: 1.4; }
     
     /* MAIN AREA */
-    main { padding: clamp(16px, 3vw, 32px); min-width: 0; flex: 1; }
-    .screen { display: none; }
+    main { padding: clamp(16px, 3vw, 32px); min-width: 0; flex: 1; max-width: 100%; overflow-x: hidden; }
+    .screen { display: none; min-width: 0; max-width: 100%; }
     .screen.active { display: block; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
     
@@ -444,11 +456,15 @@
     .bottom-nav button.active { color: var(--pink); }
     .bottom-nav button span { font-size: 16px; }
 
+    .brand-title-short { display: none; }
+    .badge-text-short { display: none; }
+    .tab-label-short { display: none; }
+
     @media (max-width: 820px) {
       .layout { grid-template-columns: 1fr; }
       .sidebar { display: none; }
       .bottom-nav { display: grid; }
-      main { padding-bottom: 85px !important; }
+      main { padding: 14px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px !important; }
       .content-grid { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
       .table-tools input { min-width: 100%; }
@@ -456,101 +472,167 @@
 
     @media (max-width: 640px) {
       .topbar {
-        height: 56px;
+        height: 54px;
         padding: 0 10px;
         gap: 6px;
       }
       .brand {
         gap: 8px;
-        max-width: calc(100% - 170px);
+        min-width: 0;
+        flex-shrink: 1;
       }
       .brand-mark {
-        width: 30px; height: 30px;
+        width: 28px; height: 28px;
+        border-radius: 8px;
       }
       .brand-mark:before, .brand-mark:after {
-        width: 9px; height: 16px;
+        width: 8px; height: 15px;
       }
-      .brand-name {
-        font-size: 13px;
-        letter-spacing: -0.02em;
-      }
+      .brand-title-full { display: none !important; }
+      .brand-title-short { display: inline !important; font-size: 13.5px; font-weight: 850; letter-spacing: -0.02em; }
       .brand-sub {
         display: none !important;
       }
       .top-actions {
         gap: 6px;
+        flex-shrink: 0;
       }
+      .badge-text-full { display: none !important; }
+      .badge-text-short { display: inline !important; }
       .live-badge {
         padding: 3px 7px;
-        font-size: 10px;
+        font-size: 10.5px;
         gap: 4px;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
       .btn-account {
-        padding: 4px 8px;
+        padding: 4px 7px;
         font-size: 11px;
-        gap: 5px;
-        max-width: 125px;
+        gap: 4px;
+        max-width: 110px;
+        flex-shrink: 0;
+        border-radius: 8px;
+      }
+      #topUserRole, .account-sep {
+        display: none !important;
       }
       .account-label {
-        max-width: 68px;
+        max-width: 64px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       
       /* Main Content on Mobile */
       main {
-        padding: 12px 10px 85px 10px !important;
+        padding: 12px 10px calc(80px + env(safe-area-inset-bottom, 0px)) 10px !important;
       }
       
+      /* Page Head */
+      .page-head {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        margin-bottom: 14px !important;
+      }
+      .page-head h1 {
+        font-size: 20px !important;
+        line-height: 1.2 !important;
+      }
+      .page-head .chip {
+        align-self: flex-start !important;
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+      }
+      .page-desc {
+        font-size: 12.5px !important;
+        margin-top: 4px !important;
+      }
+
       /* Hero Banner */
       .hero {
-        padding: 16px 14px;
-        border-radius: 16px;
-        margin-bottom: 14px;
+        padding: 16px 14px !important;
+        border-radius: 16px !important;
+        margin-bottom: 14px !important;
+        position: relative !important;
+        overflow: hidden !important;
       }
       .hero:before {
-        right: -80px; top: -80px;
-        width: 160px; height: 160px;
-        opacity: 0.25;
+        right: -60px !important;
+        top: -60px !important;
+        width: 130px !important;
+        height: 130px !important;
+        border-width: 14px !important;
+        opacity: 0.12 !important;
       }
       .hero:after {
-        right: -20px; top: 30px;
-        width: 60px; height: 60px;
-        opacity: 0.25;
+        display: none !important; /* Hide second ring to prevent text clash */
       }
       .hero h2 {
-        font-size: 19px;
-        line-height: 1.25;
+        font-size: 18px !important;
+        line-height: 1.25 !important;
+        margin-bottom: 8px !important;
       }
       .hero p {
-        font-size: 12px;
-        margin-bottom: 14px;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+        margin-bottom: 14px !important;
+      }
+      .hero-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
       }
       .hero-actions .btn {
-        width: 100%;
+        width: 100% !important;
+        justify-content: center !important;
       }
       
       /* Stat Cards */
+      .stats {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+      }
       .stat-card {
-        padding: 12px;
+        padding: 12px !important;
+        border-radius: 12px !important;
       }
       .stat-value {
-        font-size: 20px;
+        font-size: 18px !important;
       }
       
       /* Forms & Sections */
       .form-card {
-        padding: 14px 12px;
-        border-radius: 12px;
+        padding: 14px 12px !important;
+        border-radius: 12px !important;
       }
       .field-grid {
         grid-template-columns: 1fr !important;
-        gap: 10px;
+        gap: 10px !important;
       }
       .form-actions {
-        flex-direction: column-reverse;
-        gap: 8px;
+        flex-direction: column-reverse !important;
+        gap: 8px !important;
+      }
+      .form-actions > div {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 8px !important;
       }
       .form-actions .btn {
-        width: 100%;
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 11px 14px !important;
+      }
+
+      /* Storyboard & Mini Tables */
+      .mini-table {
+        min-width: 520px !important;
+      }
+      .mini-table-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
       }
       
       /* Teacher Dashboard */
@@ -565,7 +647,8 @@
         font-size: 20px !important;
       }
       .table-tools {
-        gap: 8px;
+        flex-direction: column !important;
+        gap: 8px !important;
       }
       .table-tools input, .table-tools select, .table-tools button {
         width: 100% !important;
@@ -573,14 +656,21 @@
       }
       
       /* Modals */
+      .modal-backdrop {
+        padding: 8px !important;
+        align-items: flex-end !important;
+      }
       .modal-card {
-        padding: 16px 12px !important;
-        border-radius: 16px !important;
-        max-height: 92vh !important;
+        padding: 18px 14px !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: 88vh !important;
+        width: 100% !important;
       }
       .modal-head h2 {
         font-size: 16px !important;
       }
+      .tab-label-full { display: none !important; }
+      .tab-label-short { display: inline !important; font-size: 12px !important; }
       
       /* Floating Toast Notification */
       .toast-live {
@@ -601,17 +691,20 @@
     <div class="brand">
       <div class="brand-mark"><span></span></div>
       <div class="brand-text">
-        <div class="brand-name">LKPD Digital • TikTok</div>
+        <div class="brand-name">
+          <span class="brand-title-full">LKPD Digital • TikTok</span>
+          <span class="brand-title-short">LKPD TikTok</span>
+        </div>
         <div class="brand-sub">SMA Negeri 1 Bancar · Fase E</div>
       </div>
     </div>
     <div class="top-actions">
       <div class="live-badge" id="liveBadge" title="Terhubung Real-Time ke Google Sheets">
-        <span class="live-dot"></span> <span id="syncText">Sheets Live</span>
+        <span class="live-dot"></span> <span class="badge-text-full" id="syncText">Sheets Live</span><span class="badge-text-short" id="syncTextShort">Live</span>
       </div>
       <button class="btn-account" id="userMenuBtn" type="button" title="Ganti Akun / Masuk Guru">
         <span class="avatar-mini" id="topAvatarMini">?</span>
-        <span class="account-label"><span id="topUserRole">Tamu</span>: <strong id="topUserName">Masuk</strong></span>
+        <span class="account-label"><span id="topUserRole">Tamu</span><span class="account-sep">: </span><strong id="topUserName">Masuk</strong></span>
         <span class="arrow-down">▾</span>
       </button>
     </div>
@@ -633,7 +726,7 @@
         <nav class="side-nav">
           <button class="nav-item active" data-screen="home"><span class="nav-ico">⌂</span> Beranda</button>
           <button class="nav-item" data-screen="module"><span class="nav-ico">📖</span> Modul Kokurikuler</button>
-          <button class="nav-item" data-screen="lkpd"><span class="nav-ico">▤</span> Isi LKPD (A–F)</button>
+          <button class="nav-item" data-screen="lkpd"><span class="nav-ico">▤</span> Isi LKPD (A-F)</button>
           <button class="nav-item" data-screen="submit"><span class="nav-ico">↥</span> Pengumpulan Karya</button>
           <button class="nav-item" data-screen="teacher" id="navTeacher" style="display:none"><span class="nav-ico">★</span> Dashboard Guru</button>
           <button class="nav-item" data-screen="guide"><span class="nav-ico">ⓘ</span> Panduan & Alur</button>
@@ -654,7 +747,7 @@
           <div>
             <div class="eyebrow">Kokurikuler Kelas X Fase E</div>
             <h1 id="welcomeHeading">Membuat Konten Media Sosial TikTok</h1>
-            <p class="page-desc">Rancang ide, naskah, storyboard, dan produksi video edukatif 30–60 detik secara kolaboratif dan bertanggung jawab.</p>
+            <p class="page-desc">Rancang ide, naskah, storyboard, dan produksi video edukatif 30-60 detik secara kolaboratif dan bertanggung jawab.</p>
           </div>
           <div class="chip">⏱ 90 Menit • Format 9:16</div>
         </div>
@@ -684,7 +777,7 @@
           </div>
           <div class="stat-card">
             <div class="stat-top"><span class="stat-label">Kelompok Terpilih</span><span class="stat-icon" style="background:#EBF8F1">👥</span></div>
-            <div class="stat-value" id="homeGroupValue" style="font-size:16px">—</div>
+            <div class="stat-value" id="homeGroupValue" style="font-size:16px">-</div>
             <div class="stat-foot">Google Sheets Real-Time</div>
           </div>
         </div>
@@ -821,11 +914,11 @@
           <p class="sub">Istilah teknis yang wajib dipahami dan diterapkan dalam naskah serta storyboard kelompok.</p>
           <div class="module-grid-4">
             <div class="mapel-box">
-              <b>🎯 Hook (0–3 Detik Pertama)</b>
+              <b>🎯 Hook (0-3 Detik Pertama)</b>
               <p>Tiga detik pertama video yang menentukan apakah penonton akan berhenti menggulir layar atau melewatinya. Gunakan pertanyaan provokatif, gerakan mengejutkan, atau teks tebal.</p>
             </div>
             <div class="mapel-box">
-              <b>📋 Storyboard (4–6 Adegan)</b>
+              <b>📋 Storyboard (4-6 Adegan)</b>
               <p>Rancangan visual adegan berurutan berupa sketsa/deskripsi kamera, teks dialog, dan musik sebelum proses merekam dimulai.</p>
             </div>
             <div class="mapel-box">
@@ -834,7 +927,7 @@
             </div>
             <div class="mapel-box">
               <b>📈 Engagement & Format 9:16</b>
-              <p>Tingkat suka, simpan, dan bagikan. Video <b>wajib berformat vertikal 9:16</b> dengan durasi pas <b>30–60 detik</b>.</p>
+              <p>Tingkat suka, simpan, dan bagikan. Video <b>wajib berformat vertikal 9:16</b> dengan durasi pas <b>30-60 detik</b>.</p>
             </div>
           </div>
         </div>
@@ -845,15 +938,15 @@
           <p class="sub">Ikuti alur waktu secara disiplin agar video berhasil diproduksi, diedit, dan dievaluasi dalam 1 sesi pertemuan.</p>
           
           <div class="module-step">
-            <div class="step-time">0–10 mnt</div>
+            <div class="step-time">0-10 mnt</div>
             <div class="step-body">
               <b>Pembukaan & Asesmen Diagnostik (Bagian A)</b>
-              <p>Pengondisian kelas, pembagian kelompok 4–5 siswa, dan pengerjaan pertanyaan pemantik individu mengenai kebiasaan menonton video dan etika awal.</p>
+              <p>Pengondisian kelas, pembagian kelompok 4-5 siswa, dan pengerjaan pertanyaan pemantik individu mengenai kebiasaan menonton video dan etika awal.</p>
             </div>
           </div>
 
           <div class="module-step">
-            <div class="step-time">10–25 mnt</div>
+            <div class="step-time">10-25 mnt</div>
             <div class="step-body">
               <b>Tahap 1: Pengenalan & Konsep Etika (Bagian B)</b>
               <p>Diskusi kelompok mencocokkan istilah kunci, membedah anatomi video edukatif, dan mencatat contoh nyata 4 pilar etika digital.</p>
@@ -861,15 +954,15 @@
           </div>
 
           <div class="module-step">
-            <div class="step-time">25–40 mnt</div>
+            <div class="step-time">25-40 mnt</div>
             <div class="step-body">
               <b>Tahap 2: Perencanaan & Storyboard (Bagian C)</b>
-              <p>Menentukan kartu ide pembeda, membagi peran, menyusun naskah singkat, serta merancang storyboard 4–6 adegan dengan total durasi 30–60 detik.</p>
+              <p>Menentukan kartu ide pembeda, membagi peran, menyusun naskah singkat, serta merancang storyboard 4-6 adegan dengan total durasi 30-60 detik.</p>
             </div>
           </div>
 
           <div class="module-step">
-            <div class="step-time">40–65 mnt</div>
+            <div class="step-time">40-65 mnt</div>
             <div class="step-body">
               <b>Tahap 3: Aksi & Produksi Video (Bagian D)</b>
               <p>Pengambilan rekaman vertikal 9:16 di area sekolah yang diizinkan, penyuntingan dasar di CapCut/VN, pengisian logbook menit ke menit, dan observasi guru.</p>
@@ -877,15 +970,15 @@
           </div>
 
           <div class="module-step">
-            <div class="step-time">65–75 mnt</div>
+            <div class="step-time">65-75 mnt</div>
             <div class="step-body">
               <b>Tahap 4: Uji Kualitas & Kemasan (Bagian E)</b>
-              <p>Pemeriksaan checklist uji kualitas video (hook, suara, teks, durasi, etika), pembuatan deskripsi cover, caption santun, dan 3–5 hashtag relevan.</p>
+              <p>Pemeriksaan checklist uji kualitas video (hook, suara, teks, durasi, etika), pembuatan deskripsi cover, caption santun, dan 3-5 hashtag relevan.</p>
             </div>
           </div>
 
           <div class="module-step">
-            <div class="step-time">75–90 mnt</div>
+            <div class="step-time">75-90 mnt</div>
             <div class="step-body">
               <b>Tahap 5: Refleksi & Gelar Karya (Bagian F & Pengumpulan)</b>
               <p>Pemutaran video antarkelompok, pemberian apresiasi santun, penilaian antarteman (peer assessment), refleksi individu, dan penyerahan link Google Drive ke guru.</p>
@@ -900,7 +993,7 @@
           <div style="background:#000;color:var(--cyan);padding:14px;border-radius:12px;font-family:monospace;font-size:13px;margin-bottom:16px;">
             NA Projek = (30% × Rata-rata Formatif) + (40% × Skor Produk Video) + (30% × Skor Gelar Karya)
           </div>
-          <p style="font-size:12px;color:#555;">Seluruh aspek dinilai dengan skala 1–4: <b>1 (Kurang)</b>, <b>2 (Cukup)</b>, <b>3 (Baik)</b>, dan <b>4 (Sangat Baik)</b>.</p>
+          <p style="font-size:12px;color:#555;">Seluruh aspek dinilai dengan skala 1-4: <b>1 (Kurang)</b>, <b>2 (Cukup)</b>, <b>3 (Baik)</b>, dan <b>4 (Sangat Baik)</b>.</p>
           
           <div style="margin-top:20px;padding:16px;background:var(--cyan-soft);border:1px solid #B7F6F3;border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
             <div>
@@ -956,7 +1049,7 @@
             <div class="field full">
               <label for="subVideoUrl">Tautan Google Drive Video Final *</label>
               <input type="url" id="subVideoUrl" placeholder="https://drive.google.com/file/d/.../view?usp=sharing" required>
-              <span class="helper">Format vertikal 9:16, durasi 30–60 detik.</span>
+              <span class="helper">Format vertikal 9:16, durasi 30-60 detik.</span>
             </div>
             <div class="field">
               <label for="subFileName">Nama File Video *</label>
@@ -973,10 +1066,10 @@
           <h3>Konfirmasi Kelengkapan Produk</h3>
           <p class="sub">Centang produk yang sudah siap dikumpulkan bersama kelompok:</p>
           <div class="checklist" id="submitChecklist">
-            <label class="checkline"><input type="checkbox" id="chkItem0" checked><span>Video TikTok final 30–60 detik rasio 9:16</span></label>
-            <label class="checkline"><input type="checkbox" id="chkItem1" checked><span>Naskah & Storyboard 4–6 adegan (Bagian C)</span></label>
+            <label class="checkline"><input type="checkbox" id="chkItem0" checked><span>Video TikTok final 30-60 detik rasio 9:16</span></label>
+            <label class="checkline"><input type="checkbox" id="chkItem1" checked><span>Naskah & Storyboard 4-6 adegan (Bagian C)</span></label>
             <label class="checkline"><input type="checkbox" id="chkItem2" checked><span>Logbook Produksi & Pemeriksaan Teknis (Bagian D)</span></label>
-            <label class="checkline"><input type="checkbox" id="chkItem3" checked><span>Kemasan Video: Cover, Caption, 3–5 Hashtag (Bagian E)</span></label>
+            <label class="checkline"><input type="checkbox" id="chkItem3" checked><span>Kemasan Video: Cover, Caption, 3-5 Hashtag (Bagian E)</span></label>
             <label class="checkline"><input type="checkbox" id="chkItem4" checked><span>Tanggapan, Penilaian Antarteman & Refleksi (Bagian F)</span></label>
           </div>
         </div>
@@ -1037,7 +1130,7 @@
               <tr>
                 <th style="min-width:200px;">Kelompok & Anggota (6 Siswa)</th>
                 <th>Kelas</th>
-                <th style="min-width:180px;">Tugas Kelompok (B–E) & Video</th>
+                <th style="min-width:180px;">Tugas Kelompok (B-E) & Video</th>
                 <th style="min-width:180px;">Tugas Individu (A & F)</th>
                 <th>Nilai LKPD</th>
                 <th style="text-align:right;">Aksi</th>
@@ -1063,12 +1156,12 @@
         <div class="form-card">
           <h3>Alur 6 Tahap Pengerjaan</h3>
           <div style="display:grid;gap:12px;margin-top:14px;font-size:12.5px;">
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">A</div><div><b>Bagian A — Pertanyaan Pemantik (0–10 mnt):</b> Dikerjakan secara individu. Menjawab pertanyaan tentang ketertarikan video dan etika awal.</div></div>
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">B</div><div><b>Bagian B — Konsep & Etika (10–25 mnt):</b> Dikerjakan kelompok. Mengenal Hook, Storyboard, CTA, Engagement, rasio 9:16, serta etika digital.</div></div>
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">C</div><div><b>Bagian C — Rencana Konten (25–40 mnt):</b> Menentukan ide pembeda, naskah, pembagian peran, storyboard 4–6 adegan (durasi total 30–60 detik).</div></div>
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">D</div><div><b>Bagian D — Logbook Produksi (40–65 mnt):</b> Mencatat kemajuan perekaman video, kendala teknis, solusi, dan ceklist audio visual.</div></div>
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">E</div><div><b>Bagian E — Uji Kualitas & Kemasan (65–75 mnt):</b> Melakukan uji kualitas video, menyusun cover, caption persuasif, dan 3–5 hashtag relevan.</div></div>
-            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">F</div><div><b>Bagian F — Refleksi & Penilaian (75–90 mnt):</b> Memberikan apresiasi kelompok lain, penilaian antarteman (skala 1–4), dan refleksi diri.</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">A</div><div><b>Bagian A - Pertanyaan Pemantik (0-10 mnt):</b> Dikerjakan secara individu. Menjawab pertanyaan tentang ketertarikan video dan etika awal.</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">B</div><div><b>Bagian B - Konsep & Etika (10-25 mnt):</b> Dikerjakan kelompok. Mengenal Hook, Storyboard, CTA, Engagement, rasio 9:16, serta etika digital.</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">C</div><div><b>Bagian C - Rencana Konten (25-40 mnt):</b> Menentukan ide pembeda, naskah, pembagian peran, storyboard 4-6 adegan (durasi total 30-60 detik).</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">D</div><div><b>Bagian D - Logbook Produksi (40-65 mnt):</b> Mencatat kemajuan perekaman video, kendala teknis, solusi, dan ceklist audio visual.</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">E</div><div><b>Bagian E - Uji Kualitas & Kemasan (65-75 mnt):</b> Melakukan uji kualitas video, menyusun cover, caption persuasif, dan 3-5 hashtag relevan.</div></div>
+            <div style="display:flex;gap:12px;"><div class="avatar" style="width:28px;height:28px;font-size:11px;">F</div><div><b>Bagian F - Refleksi & Penilaian (75-90 mnt):</b> Memberikan apresiasi kelompok lain, penilaian antarteman (skala 1-4), dan refleksi diri.</div></div>
           </div>
         </div>
       </section>
@@ -1099,8 +1192,8 @@
       </div>
 
       <div style="display:flex;gap:8px;margin-bottom:16px;">
-        <button class="btn btn-primary" id="tabSiswaBtn" style="flex:1;">Masuk sebagai Siswa</button>
-        <button class="btn btn-light" id="tabGuruBtn" style="flex:1;">Masuk sebagai Guru</button>
+        <button class="btn btn-primary" id="tabSiswaBtn" style="flex:1;"><span class="tab-label-full">Masuk sebagai Siswa</span><span class="tab-label-short">Masuk Siswa</span></button>
+        <button class="btn btn-light" id="tabGuruBtn" style="flex:1;"><span class="tab-label-full">Masuk sebagai Guru</span><span class="tab-label-short">Masuk Guru</span></button>
       </div>
 
       <!-- FORM SISWA -->
@@ -1171,7 +1264,7 @@
           <b>Hook 3 Detik:</b> Visual mengejutkan, pertanyaan memancing, atau masalah nyata yang membuat penonton berhenti scrolling.
         </div>
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid var(--cyan);">
-          <b>Durasi & Format Storyboard:</b> Wajib berorientasi vertikal 9:16 dengan total durasi 4–6 adegan berkisar <b>30–60 detik</b>.
+          <b>Durasi & Format Storyboard:</b> Wajib berorientasi vertikal 9:16 dengan total durasi 4-6 adegan berkisar <b>30-60 detik</b>.
         </div>
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid #000;">
           <b>Call-to-Action (CTA):</b> Ajakan penutup yang spesifik dan santun, misalnya ajakan berdiskusi di komentar atau membagikan kebiasaan positif.
@@ -1195,12 +1288,12 @@
 
 // === 1. STATE & KONFIGURASI ===
 const SECTIONS = [
-  { id: 'A', title: 'Pertanyaan Pemantik', mode: 'individual', time: '0–10 menit', desc: 'Jawab pertanyaan pemantik ini dengan jujur menggunakan bahasamu sendiri.' },
-  { id: 'B', title: 'Mengenal Konsep & Etika Konten', mode: 'group', time: '10–25 menit', desc: 'Pahami istilah kunci, anatomi video edukatif, dan etika keamanan digital.' },
-  { id: 'C', title: 'Merencanakan Konten & Storyboard', mode: 'group', time: '25–40 menit', desc: 'Tentukan ide pembeda, naskah singkat, storyboard 4–6 adegan, dan kesiapan produksi.' },
-  { id: 'D', title: 'Logbook Produksi', mode: 'group', time: '40–65 menit', desc: 'Catat kemajuan perekaman video, pembagian tugas, kendala, dan ceklist teknis.' },
-  { id: 'E', title: 'Uji Kualitas & Pengemasan', mode: 'group', time: '65–75 menit', desc: 'Lakukan uji kualitas video, buat deskripsi cover, caption santun, dan 3–5 hashtag relevan.' },
-  { id: 'F', title: 'Refleksi & Gelar Karya', mode: 'individual-and-group', time: '75–90 menit', desc: 'Apresiasi karya kelompok lain, lakukan penilaian antarteman (skala 1–4), dan refleksi diri.' }
+  { id: 'A', title: 'Pertanyaan Pemantik', mode: 'individual', time: '0-10 menit', desc: 'Jawab pertanyaan pemantik ini dengan jujur menggunakan bahasamu sendiri.' },
+  { id: 'B', title: 'Mengenal Konsep & Etika Konten', mode: 'group', time: '10-25 menit', desc: 'Pahami istilah kunci, anatomi video edukatif, dan etika keamanan digital.' },
+  { id: 'C', title: 'Merencanakan Konten & Storyboard', mode: 'group', time: '25-40 menit', desc: 'Tentukan ide pembeda, naskah singkat, storyboard 4-6 adegan, dan kesiapan produksi.' },
+  { id: 'D', title: 'Logbook Produksi', mode: 'group', time: '40-65 menit', desc: 'Catat kemajuan perekaman video, pembagian tugas, kendala, dan ceklist teknis.' },
+  { id: 'E', title: 'Uji Kualitas & Pengemasan', mode: 'group', time: '65-75 menit', desc: 'Lakukan uji kualitas video, buat deskripsi cover, caption santun, dan 3-5 hashtag relevan.' },
+  { id: 'F', title: 'Refleksi & Gelar Karya', mode: 'individual-and-group', time: '75-90 menit', desc: 'Apresiasi karya kelompok lain, lakukan penilaian antarteman (skala 1-4), dan refleksi diri.' }
 ];
 
 let currentUser = JSON.parse(localStorage.getItem('lkpd_user') || 'null');
@@ -1350,7 +1443,7 @@ async function initApp() {
       loadMyAnswersFromSheets();
     }
   } else {
-    openAccountModal();
+    // Biarkan pengguna melihat beranda awal, modal akan dibuka saat klik 'Masuk' atau tombol aksi
   }
 
   setupEventListeners();
@@ -1374,20 +1467,27 @@ function updateUserUI() {
     $('sideName').textContent = 'Belum Masuk';
     $('sideSub').textContent = 'Klik untuk pilih identitas';
     $('sideAvatar').textContent = '?';
-    $('homeGroupValue').textContent = '—';
+    $('homeGroupValue').textContent = '-';
   }
   updateModuleStatusUI();
 }
 
+function setSyncStatus(fullText, shortText) {
+  const f = $('syncText');
+  const s = $('syncTextShort');
+  if (f) f.textContent = fullText;
+  if (s) s.textContent = shortText || fullText;
+}
+
 async function loadInitialPublicData() {
-  $('syncText').textContent = 'Koneksi...';
+  setSyncStatus('Koneksi...', 'Konek...');
   const res = await apiCall('getInitialData');
   if (res.status === 'success' && res.data) {
     initialDataCache = res.data;
-    $('syncText').textContent = 'Live ✓';
+    setSyncStatus('Sheets Live', 'Live');
     populateLoginDropdowns(res.data);
   } else {
-    $('syncText').textContent = 'Offline';
+    setSyncStatus('Offline', 'Off');
   }
 }
 
@@ -1695,7 +1795,7 @@ function openSectionDirectly(sectionId) {
   navigateTo('lkpd');
 }
 
-// === 8. RENDERING FORM DINAMIS (BAGIAN A–F) ===
+// === 8. RENDERING FORM DINAMIS (BAGIAN A-F) ===
 function renderActiveSectionForm() {
   const s = SECTIONS.find(x => x.id === activeSectionId);
   $('formSectionTag').textContent = `Bagian ${s.id} • ${s.mode === 'individual' ? 'Individu' : (s.mode === 'group' ? 'Kelompok' : 'Kelompok & Individu')}`;
@@ -1766,7 +1866,7 @@ function renderActiveSectionForm() {
         ${renderInput('Topik Konten Kelompok *', 'c_topic', '', 'Contoh: Jejak Digital Siswa')}
         ${renderInput('Target Penonton Utama *', 'c_audience', '', 'Contoh: Pelajar SMA & Remaja')}
         ${renderTextarea('Pesan Utama (Satu Kalimat Padat) *', 'c_message', 'Apa pesan moral atau nilai utama yang ingin ditinggalkan?')}
-        ${renderTextarea('Hook (0–3 Detik Pertama) *', 'c_hook', 'Kalimat pembuka mengejutkan atau gerakan visual pemancing')}
+        ${renderTextarea('Hook (0-3 Detik Pertama) *', 'c_hook', 'Kalimat pembuka mengejutkan atau gerakan visual pemancing')}
         ${renderTextarea('Call-to-Action (CTA) *', 'c_cta', 'Contoh: Menurutmu bagaimana? Tulis di komentar ya!')}
         ${renderTextarea('Sudut Pandang Pembeda dari Konten Umum *', 'c_unique', 'Apa keunikan konten ini dibanding konten TikTok lainnya?')}
       </div>
@@ -1788,12 +1888,12 @@ function renderActiveSectionForm() {
     `);
     html += formCard('C.3 · Naskah Singkat Video', 'Susun alur cerita singkat dengan pembagian Hook, Isi, dan CTA.', `
       <div class="field-grid">
-        ${renderTextarea('Hook (0–3 detik pembuka) *', 'c_scriptHook', 'Dialog atau suara awal pembuka')}
+        ${renderTextarea('Hook (0-3 detik pembuka) *', 'c_scriptHook', 'Dialog atau suara awal pembuka')}
         ${renderTextarea('Isi Naskah (Penyampaian Inti Pesan) *', 'c_scriptBody', 'Penjelasan materi secara ringkas dan menarik')}
-        ${renderTextarea('CTA Penutup (3–5 detik akhir) *', 'c_scriptCTA', 'Kalimat ajakan penutup')}
+        ${renderTextarea('CTA Penutup (3-5 detik akhir) *', 'c_scriptCTA', 'Kalimat ajakan penutup')}
       </div>
     `);
-    html += formCard('C.4 · Storyboard Adegan (4–6 Adegan, Total 30–60 Detik)', 'Rancang adegan berurutan dengan format 9:16. Perhatikan total durasi.', `
+    html += formCard('C.4 · Storyboard Adegan (4-6 Adegan, Total 30-60 Detik)', 'Rancang adegan berurutan dengan format 9:16. Perhatikan total durasi.', `
       <div class="mini-table-wrap">
         <table class="mini-table">
           <thead>
@@ -1820,7 +1920,7 @@ function renderActiveSectionForm() {
       </div>
       <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#F8F8FA;border-radius:10px;font-size:12px;">
         <span>Total Durasi Storyboard: <b id="storyboardTotalSec">0</b> detik</span>
-        <span id="storyboardDurationBadge" class="status-tag draft">Wajib 30–60 detik</span>
+        <span id="storyboardDurationBadge" class="status-tag draft">Wajib 30-60 detik</span>
       </div>
     `);
     html += formCard('C.5 · Kesiapan Produksi', 'Periksa kelengkapan sebelum mulai pengambilan gambar.', `
@@ -1843,7 +1943,7 @@ function renderActiveSectionForm() {
         <table class="mini-table">
           <thead><tr><th>Waktu</th><th>Kegiatan yang Dilakukan</th><th>Penanggung Jawab</th><th>Status Kerja</th></tr></thead>
           <tbody>
-            ${[['Menit 40–47', 1], ['Menit 47–55', 2], ['Menit 55–65', 3]].map(([w, i]) => `
+            ${[['Menit 40-47', 1], ['Menit 47-55', 2], ['Menit 55-65', 3]].map(([w, i]) => `
               <tr>
                 <td><b>${w}</b></td>
                 <td><input type="text" data-save="d_task${i}" value="${escapeHtml(localAnswers['d_task' + i] || '')}" placeholder="Kegiatan yang dikerjakan"></td>
@@ -1884,7 +1984,7 @@ function renderActiveSectionForm() {
       ['Hook Tiga Detik', 'Apakah awal video langsung memikat rasa penasaran penonton?'],
       ['Kejelasan Pesan Utama', 'Apakah pesan utama dapat dipahami jelas hanya dalam sekali tonton?'],
       ['Kualitas Audio & Teks', 'Apakah audio terdengar jernih dan teks di layar mudah dibaca?'],
-      ['Format Vertikal & Durasi', 'Apakah video berorientasi 9:16 dengan durasi pas 30–60 detik?'],
+      ['Format Vertikal & Durasi', 'Apakah video berorientasi 9:16 dengan durasi pas 30-60 detik?'],
       ['Etika, Izin & Hak Cipta', 'Apakah tidak ada pelanggaran privasi, data pribadi, atau hak cipta?']
     ];
     html += formCard('E.1 · Checklist Uji Kualitas Video (Quality Check)', 'Periksa hasil rekaman video kelompokmu dan catat tindakan perbaikan jika ada.', `
@@ -1893,7 +1993,7 @@ function renderActiveSectionForm() {
           <div class="checkline" style="flex-direction:column;gap:6px;">
             <div style="display:flex;gap:10px;align-items:center;">
               <input type="checkbox" data-save="e_check${i}" ${localAnswers['e_check' + i] ? 'checked' : ''}>
-              <span><b>${c[0]}</b> — <span style="color:var(--muted);">${c[1]}</span></span>
+              <span><b>${c[0]}</b> - <span style="color:var(--muted);">${c[1]}</span></span>
             </div>
             <input type="text" data-save="e_fix${i}" value="${escapeHtml(localAnswers['e_fix' + i] || '')}" placeholder="Catatan perbaikan yang telah dilakukan kelompok (jika ada)" style="width:100%;margin-left:26px;border:1px solid #DDD;padding:6px 10px;border-radius:8px;font-size:11.5px;">
           </div>
@@ -1905,7 +2005,7 @@ function renderActiveSectionForm() {
         ${renderTextarea('Deskripsi Cover Video (Teks, Judul Thumbnail, Warna) *', 'e_cover', 'Rancangan visual cover depan video')}
         ${renderTextarea('Caption Video (Ringkas, Santun, Persuasif) *', 'e_caption', 'Tulis kalimat caption yang menarik audiens')}
         <div class="field">
-          <label for="e_hashtags">Hashtag Wajib (3–5 Hashtag Relevan diawali tanda #) *</label>
+          <label for="e_hashtags">Hashtag Wajib (3-5 Hashtag Relevan diawali tanda #) *</label>
           <input type="text" id="e_hashtags" data-save="e_hashtags" value="${escapeHtml(localAnswers.e_hashtags || '')}" placeholder="#LiterasiDigital #KontenPositif #SMAN1Bancar">
           <span class="helper" id="hashtagCountLabel">Jumlah hashtag: 0 (minimal 3, maksimal 5)</span>
         </div>
@@ -1918,28 +2018,28 @@ function renderActiveSectionForm() {
       <div class="field-grid">
         ${renderInput('Nama Kelompok yang Ditanggapi *', 'f_group', '', 'Contoh: Kelompok 2 (Inspirasi)')}
         <div class="field">
-          <label for="f_score">Skor Apresiasi (Skala 1–4) *</label>
+          <label for="f_score">Skor Apresiasi (Skala 1-4) *</label>
           <select id="f_score" data-save="f_score">
-            <option value="">Pilih Skor (1–4)</option>
-            <option value="4" ${localAnswers.f_score == '4' ? 'selected' : ''}>4 — Sangat Baik (Kreatif & Menginspirasi)</option>
-            <option value="3" ${localAnswers.f_score == '3' ? 'selected' : ''}>3 — Baik (Pesan Jelas & Rapi)</option>
-            <option value="2" ${localAnswers.f_score == '2' ? 'selected' : ''}>2 — Cukup (Perlu Sedikit Perbaikan)</option>
-            <option value="1" ${localAnswers.f_score == '1' ? 'selected' : ''}>1 — Kurang (Banyak yang Harus Dilengkapi)</option>
+            <option value="">Pilih Skor (1-4)</option>
+            <option value="4" ${localAnswers.f_score == '4' ? 'selected' : ''}>4 - Sangat Baik (Kreatif & Menginspirasi)</option>
+            <option value="3" ${localAnswers.f_score == '3' ? 'selected' : ''}>3 - Baik (Pesan Jelas & Rapi)</option>
+            <option value="2" ${localAnswers.f_score == '2' ? 'selected' : ''}>2 - Cukup (Perlu Sedikit Perbaikan)</option>
+            <option value="1" ${localAnswers.f_score == '1' ? 'selected' : ''}>1 - Kurang (Banyak yang Harus Dilengkapi)</option>
           </select>
         </div>
         ${renderTextarea('Hal yang Sudah Bagus dari Karyanya *', 'f_good', 'Apresiasi bagian hook, alur cerita, atau acting-nya')}
         ${renderTextarea('Saran Perbaikan yang Santun & Spesifik *', 'f_suggest', 'Saran perbaikan untuk karya mereka ke depan')}
       </div>
     `);
-    html += formCard('F.2 · Penilaian Antarteman (Peer Assessment)', 'Diisi sendiri oleh siswa. Beri penilaian 1–4 untuk keaktifan, menghargai pendapat, dan tanggung jawab teman sekelompokmu.', `
+    html += formCard('F.2 · Penilaian Antarteman (Peer Assessment)', 'Diisi sendiri oleh siswa. Beri penilaian 1-4 untuk keaktifan, menghargai pendapat, dan tanggung jawab teman sekelompokmu.', `
       <div class="mini-table-wrap">
         <table class="mini-table">
           <thead>
             <tr>
               <th>Nama Teman Sekelompok</th>
-              <th>Kontribusi Aktif (1–4)</th>
-              <th>Menghargai Pendapat (1–4)</th>
-              <th>Tanggung Jawab Peran (1–4)</th>
+              <th>Kontribusi Aktif (1-4)</th>
+              <th>Menghargai Pendapat (1-4)</th>
+              <th>Tanggung Jawab Peran (1-4)</th>
             </tr>
           </thead>
           <tbody>
@@ -2049,10 +2149,10 @@ function calculateStoryboardTotal() {
   if (badgeEl) {
     if (total >= 30 && total <= 60) {
       badgeEl.className = 'status-tag done';
-      badgeEl.textContent = '✓ Pas 30–60 Detik';
+      badgeEl.textContent = '✓ Pas 30-60 Detik';
     } else {
       badgeEl.className = 'status-tag draft';
-      badgeEl.textContent = `Wajib 30–60 detik (Saat ini: ${total}s)`;
+      badgeEl.textContent = `Wajib 30-60 detik (Saat ini: ${total}s)`;
     }
   }
 }
@@ -2062,7 +2162,7 @@ function validateHashtags() {
   const countLabel = $('hashtagCountLabel');
   if (!el || !countLabel) return;
   const tags = el.value.trim().split(/[\s,]+/).filter(t => t.startsWith('#') && t.length > 1);
-  countLabel.textContent = `Jumlah hashtag valid: ${tags.length} (wajib 3–5 hashtag)`;
+  countLabel.textContent = `Jumlah hashtag valid: ${tags.length} (wajib 3-5 hashtag)`;
   countLabel.style.color = (tags.length >= 3 && tags.length <= 5) ? 'var(--green)' : 'var(--pink)';
 }
 
@@ -2265,7 +2365,7 @@ function renderTeacherTable() {
         <td>
           <div style="margin-bottom:6px;">
             <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
-              <span>Tahap B–E: <b>${r.bagianKelompokSelesai || 0}/4 Selesai</b></span>
+              <span>Tahap B-E: <b>${r.bagianKelompokSelesai || 0}/4 Selesai</b></span>
               <b>${r.progress}%</b>
             </div>
             <div style="height:6px;width:100%;max-width:130px;background:#EAEAEF;border-radius:4px;overflow:hidden;">
@@ -2294,7 +2394,7 @@ function renderTeacherTable() {
         </td>
         <td>
           <div style="font-size:16px;font-weight:800;color:${r.nilaiLKPD !== '' ? 'var(--cyan)' : 'var(--muted)'};">
-            ${r.nilaiLKPD !== '' ? r.nilaiLKPD : '—'}
+            ${r.nilaiLKPD !== '' ? r.nilaiLKPD : '-'}
           </div>
           ${r.catatanGuru ? `<div style="font-size:10px;color:var(--muted);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(r.catatanGuru)}">"${escapeHtml(r.catatanGuru)}"</div>` : ''}
         </td>
@@ -2367,15 +2467,15 @@ async function inspectGroup(groupId) {
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div>
               <b style="font-size:13px;">${idx + 1}. ${escapeHtml(m.namaTampilan)}</b>
-              <span style="font-size:11px;color:var(--muted);margin-left:6px;">(Absen: ${escapeHtml((aData && aData.a_absen) || '—')})</span>
+              <span style="font-size:11px;color:var(--muted);margin-left:6px;">(Absen: ${escapeHtml((aData && aData.a_absen) || '-')})</span>
             </div>
             <span class="status-tag ${isDone ? 'done' : 'draft'}">${isDone ? 'Selesai ✓' : 'Belum Lengkap'}</span>
           </div>
           ${aData ? `
             <div style="font-size:12px;display:grid;gap:6px;background:#F8F8FA;padding:10px;border-radius:8px;">
-              <div><b>Q1 (Konten Favorit):</b> ${escapeHtml(aData.a_q1 || '—')}</div>
-              <div><b>Q2 (Video Edukatif):</b> ${escapeHtml(aData.a_q2 || '—')}</div>
-              <div><b>Q3 (Etika Awal):</b> ${escapeHtml(aData.a_q3 || '—')}</div>
+              <div><b>Q1 (Konten Favorit):</b> ${escapeHtml(aData.a_q1 || '-')}</div>
+              <div><b>Q2 (Video Edukatif):</b> ${escapeHtml(aData.a_q2 || '-')}</div>
+              <div><b>Q3 (Etika Awal):</b> ${escapeHtml(aData.a_q3 || '-')}</div>
             </div>
           ` : `<div style="font-size:11.5px;color:var(--muted);font-style:italic;">Siswa ini belum mengisi Bagian A di aplikasi.</div>`}
         </div>
@@ -2393,14 +2493,14 @@ async function inspectGroup(groupId) {
           </div>
           ${fData ? `
             <div style="font-size:12px;display:grid;gap:6px;background:#F8F8FA;padding:10px;border-radius:8px;">
-              <div><b>Kelompok yang dinilai:</b> ${escapeHtml(fData.f_group || '—')} (Skor: ${escapeHtml(fData.f_score || '—')}/100)</div>
-              <div><b>Kelebihan Karya:</b> ${escapeHtml(fData.f_good || '—')}</div>
-              <div><b>Saran Perbaikan:</b> ${escapeHtml(fData.f_suggest || '—')}</div>
+              <div><b>Kelompok yang dinilai:</b> ${escapeHtml(fData.f_group || '-')} (Skor: ${escapeHtml(fData.f_score || '-')}/100)</div>
+              <div><b>Kelebihan Karya:</b> ${escapeHtml(fData.f_good || '-')}</div>
+              <div><b>Saran Perbaikan:</b> ${escapeHtml(fData.f_suggest || '-')}</div>
               <div style="margin-top:6px;padding-top:6px;border-top:1px dashed #DDD;">
-                <b>Skor Rekan Kelompok (Skala 1–4):</b>
-                <div style="margin-top:4px;">• ${escapeHtml(fData.f_peerName0 || 'Teman 1')}: Aktif ${fData.f_peer0_aktif || '—'}, Hormat ${fData.f_peer0_respect || '—'}, TanggungJawab ${fData.f_peer0_duty || '—'}</div>
-                <div>• ${escapeHtml(fData.f_peerName1 || 'Teman 2')}: Aktif ${fData.f_peer1_aktif || '—'}, Hormat ${fData.f_peer1_respect || '—'}, TanggungJawab ${fData.f_peer1_duty || '—'}</div>
-                <div>• ${escapeHtml(fData.f_peerName2 || 'Teman 3')}: Aktif ${fData.f_peer2_aktif || '—'}, Hormat ${fData.f_peer2_respect || '—'}, TanggungJawab ${fData.f_peer2_duty || '—'}</div>
+                <b>Skor Rekan Kelompok (Skala 1-4):</b>
+                <div style="margin-top:4px;">• ${escapeHtml(fData.f_peerName0 || 'Teman 1')}: Aktif ${fData.f_peer0_aktif || '-'}, Hormat ${fData.f_peer0_respect || '-'}, TanggungJawab ${fData.f_peer0_duty || '-'}</div>
+                <div>• ${escapeHtml(fData.f_peerName1 || 'Teman 2')}: Aktif ${fData.f_peer1_aktif || '-'}, Hormat ${fData.f_peer1_respect || '-'}, TanggungJawab ${fData.f_peer1_duty || '-'}</div>
+                <div>• ${escapeHtml(fData.f_peerName2 || 'Teman 3')}: Aktif ${fData.f_peer2_aktif || '-'}, Hormat ${fData.f_peer2_respect || '-'}, TanggungJawab ${fData.f_peer2_duty || '-'}</div>
               </div>
             </div>
           ` : `<div style="font-size:11.5px;color:var(--muted);font-style:italic;">Siswa ini belum mengisi Penilaian Antarteman di aplikasi.</div>`}
@@ -2413,7 +2513,7 @@ async function inspectGroup(groupId) {
       <!-- TAB NAVIGATION -->
       <div style="display:flex;gap:6px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px;overflow-x:auto;">
         <button class="btn btn-primary" id="inspTabBtn-video" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('video')">🎬 Video & Berkas</button>
-        <button class="btn btn-light" id="inspTabBtn-group" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('group')">👥 Jawaban Kelompok (B–E)</button>
+        <button class="btn btn-light" id="inspTabBtn-group" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('group')">👥 Jawaban Kelompok (B-E)</button>
         <button class="btn btn-light" id="inspTabBtn-indiv" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('indiv')">👤 Tugas Individu Bag. A (6 Siswa)</button>
         <button class="btn btn-light" id="inspTabBtn-peer" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('peer')">🤝 Penilaian Antarteman (F)</button>
         <button class="btn btn-dark" id="inspTabBtn-grade" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('grade')">📝 Beri Nilai Guru</button>
@@ -2424,30 +2524,30 @@ async function inspectGroup(groupId) {
         <h4 style="margin:0 0 8px;font-size:13.5px;">Karya Video Final & Tautan Google Drive</h4>
         ${subsHtml}
         <div style="margin-top:14px;background:#F8F8FA;padding:12px;border-radius:10px;font-size:12px;">
-          <div><b>Caption Video:</b> ${escapeHtml(ansE.e_caption || '—')}</div>
-          <div style="margin-top:4px;"><b>Hashtag (3–5):</b> <span style="color:var(--cyan);font-weight:700;">${escapeHtml(ansE.e_hashtags || '—')}</span></div>
-          <div style="margin-top:4px;"><b>Cover Video:</b> ${escapeHtml(ansE.e_cover || '—')}</div>
+          <div><b>Caption Video:</b> ${escapeHtml(ansE.e_caption || '-')}</div>
+          <div style="margin-top:4px;"><b>Hashtag (3-5):</b> <span style="color:var(--cyan);font-weight:700;">${escapeHtml(ansE.e_hashtags || '-')}</span></div>
+          <div style="margin-top:4px;"><b>Cover Video:</b> ${escapeHtml(ansE.e_cover || '-')}</div>
         </div>
       </div>
 
       <!-- PANE 2: JAWABAN KELOMPOK (B, C, D, E) -->
       <div id="inspPane-group" style="display:none;font-size:12.5px;">
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;">
-          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian B — Konsep & Etika Konten</h4>
-          <div><b>Judul/Topik:</b> ${escapeHtml(ansB.b_title || '—')}</div>
-          <div><b>Hook 3 Detik:</b> ${escapeHtml(ansB.b_hook || '—')}</div>
-          <div><b>Pesan Kunci:</b> ${escapeHtml(ansB.b_message || '—')}</div>
-          <div><b>Call to Action (CTA):</b> ${escapeHtml(ansB.b_cta || '—')}</div>
+          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian B - Konsep & Etika Konten</h4>
+          <div><b>Judul/Topik:</b> ${escapeHtml(ansB.b_title || '-')}</div>
+          <div><b>Hook 3 Detik:</b> ${escapeHtml(ansB.b_hook || '-')}</div>
+          <div><b>Pesan Kunci:</b> ${escapeHtml(ansB.b_message || '-')}</div>
+          <div><b>Call to Action (CTA):</b> ${escapeHtml(ansB.b_cta || '-')}</div>
         </div>
 
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <h4 style="margin:0;color:var(--ink);">Bagian C — Naskah & Storyboard (30–60 Detik)</h4>
+            <h4 style="margin:0;color:var(--ink);">Bagian C - Naskah & Storyboard (30-60 Detik)</h4>
             <span class="status-tag ${(totalSec >= 30 && totalSec <= 60) ? 'done' : 'draft'}">Total Durasi: ${totalSec} Detik</span>
           </div>
-          <div><b>Skrip Hook:</b> ${escapeHtml(ansC.c_scriptHook || '—')}</div>
-          <div><b>Skrip Isi:</b> ${escapeHtml(ansC.c_scriptBody || '—')}</div>
-          <div><b>Skrip CTA:</b> ${escapeHtml(ansC.c_scriptCTA || '—')}</div>
+          <div><b>Skrip Hook:</b> ${escapeHtml(ansC.c_scriptHook || '-')}</div>
+          <div><b>Skrip Isi:</b> ${escapeHtml(ansC.c_scriptBody || '-')}</div>
+          <div><b>Skrip CTA:</b> ${escapeHtml(ansC.c_scriptCTA || '-')}</div>
 
           <div style="margin-top:8px;overflow-x:auto;">
             <table class="data-table" style="font-size:11.5px;background:#FFF;">
@@ -2458,9 +2558,9 @@ async function inspectGroup(groupId) {
                 ${[1, 2, 3, 4, 5, 6].map(i => `
                   <tr>
                     <td><b>Adegan ${i}</b></td>
-                    <td>${escapeHtml(ansC[`c_visual${i}`] || '—')}</td>
-                    <td>${escapeHtml(ansC[`c_dialog${i}`] || '—')}</td>
-                    <td>${escapeHtml(ansC[`c_audio${i}`] || '—')}</td>
+                    <td>${escapeHtml(ansC[`c_visual${i}`] || '-')}</td>
+                    <td>${escapeHtml(ansC[`c_dialog${i}`] || '-')}</td>
+                    <td>${escapeHtml(ansC[`c_audio${i}`] || '-')}</td>
                     <td><b>${ansC[`c_duration${i}`] || 0}s</b></td>
                   </tr>
                 `).join('')}
@@ -2470,9 +2570,9 @@ async function inspectGroup(groupId) {
         </div>
 
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;">
-          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian D — Logbook & Pembagian Tugas</h4>
+          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian D - Logbook & Pembagian Tugas</h4>
           <div><b>Kendala:</b> ${escapeHtml(ansD.d_problem || 'Tidak ada')}</div>
-          <div><b>Solusi:</b> ${escapeHtml(ansD.d_solution || '—')}</div>
+          <div><b>Solusi:</b> ${escapeHtml(ansD.d_solution || '-')}</div>
         </div>
       </div>
 
@@ -2491,9 +2591,9 @@ async function inspectGroup(groupId) {
         </div>
         <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;">
           <h4 style="margin:0 0 6px;">Refleksi Kelompok:</h4>
-          <div><b>Hal yang paling menantang:</b> ${escapeHtml(ansF.f_group1 || '—')}</div>
-          <div><b>Solusi kerjasama:</b> ${escapeHtml(ansF.f_group2 || '—')}</div>
-          <div><b>Pelajaran untuk proyek berikutnya:</b> ${escapeHtml(ansF.f_group3 || '—')}</div>
+          <div><b>Hal yang paling menantang:</b> ${escapeHtml(ansF.f_group1 || '-')}</div>
+          <div><b>Solusi kerjasama:</b> ${escapeHtml(ansF.f_group2 || '-')}</div>
+          <div><b>Pelajaran untuk proyek berikutnya:</b> ${escapeHtml(ansF.f_group3 || '-')}</div>
         </div>
         ${membersHtmlF}
       </div>
@@ -2505,7 +2605,7 @@ async function inspectGroup(groupId) {
           <p class="sub">Nilai dan catatan akan disimpan langsung ke sheet PenilaianGuru di Google Sheets secara real-time.</p>
           <div class="field-grid">
             <div class="field">
-              <label for="gradeScoreInput">Nilai LKPD (Skala 0–100) *</label>
+              <label for="gradeScoreInput">Nilai LKPD (Skala 0-100) *</label>
               <input type="number" id="gradeScoreInput" min="0" max="100" value="${escapeHtml(currentGrade)}" placeholder="Contoh: 88">
             </div>
             <div class="field full">
