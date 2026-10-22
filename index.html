@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#000000">
-  <title>LKPD Digital | Membuat Konten TikTok</title>
+  <title>LKPD Digital & Modul Kokurikuler | Membuat Konten TikTok</title>
   
   <!-- Google Fonts & SweetAlert2 CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,7 +112,7 @@
     /* LAYOUT */
     .layout {
       display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
+      grid-template-columns: 248px minmax(0, 1fr);
       max-width: 1400px;
       width: 100%;
       margin: 0 auto;
@@ -180,7 +180,7 @@
     .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
     .eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
     h1 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.04em; margin: 0; font-weight: 850; line-height: 1.15; }
-    .page-desc { color: var(--muted); margin: 6px 0 0; max-width: 650px; font-size: 13px; }
+    .page-desc { color: var(--muted); margin: 6px 0 0; max-width: 680px; font-size: 13px; }
     .chip { border: 1px solid var(--line); background: #FFF; border-radius: 10px; padding: 7px 11px; font-size: 11px; font-weight: 700; color: #555765; white-space: nowrap; }
 
     /* HERO */
@@ -203,7 +203,7 @@
       width: 80px; height: 80px; border: 20px solid var(--pink);
       border-radius: 50%; opacity: 0.85;
     }
-    .hero-content { position: relative; z-index: 1; max-width: 580px; }
+    .hero-content { position: relative; z-index: 1; max-width: 600px; }
     .hero-kicker { font-size: 10px; font-weight: 900; letter-spacing: 0.12em; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
     .hero h2 { font-size: clamp(20px, 2.8vw, 28px); letter-spacing: -0.035em; margin: 0 0 8px; font-weight: 850; line-height: 1.18; }
     .hero p { color: #D2D3DC; font-size: 13px; margin: 0 0 18px; line-height: 1.5; }
@@ -269,6 +269,32 @@
     .status-tag.done { background: var(--green-soft); color: var(--green); }
     .status-tag.draft { background: #EFEFF2; color: #666; }
     .status-tag.sync { background: var(--cyan-soft); color: #007471; }
+    .status-tag.warn { background: var(--pink-soft); color: var(--pink); }
+
+    /* MODULE ACCORDION / TABS */
+    .module-card {
+      background: #FFF; border: 1px solid var(--line);
+      border-radius: 16px; padding: 20px; margin-bottom: 16px;
+    }
+    .module-card h3 { font-size: 15px; font-weight: 850; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+    .module-card p.sub { font-size: 12px; color: var(--muted); margin: 0 0 16px; }
+    .module-grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .mapel-box {
+      border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: #FAFAFC;
+    }
+    .mapel-box b { display: block; font-size: 12.5px; margin-bottom: 4px; }
+    .mapel-box p { margin: 0; font-size: 11.5px; color: #555; line-height: 1.45; }
+    
+    .module-step {
+      display: flex; gap: 14px; padding: 12px 14px; border: 1px solid var(--line);
+      border-radius: 12px; margin-bottom: 8px; background: #FAFAFB;
+    }
+    .step-time {
+      width: 60px; flex: none; font-weight: 850; font-size: 11px; color: #000;
+      background: var(--cyan-soft); border-radius: 8px; padding: 4px; display: grid; place-items: center; text-align: center;
+    }
+    .step-body b { display: block; font-size: 12.5px; margin-bottom: 3px; }
+    .step-body p { margin: 0; font-size: 11.5px; color: #555; line-height: 1.4; }
 
     /* FORM STYLES */
     .form-card {
@@ -349,7 +375,7 @@
     }
     .modal-backdrop.open { display: grid; }
     .modal-card {
-      background: #FFF; border-radius: 20px; width: 100%; max-width: 600px; max-height: 90vh;
+      background: #FFF; border-radius: 20px; width: 100%; max-width: 620px; max-height: 90vh;
       overflow-y: auto; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); position: relative;
     }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -358,13 +384,13 @@
     
     /* MOBILE NAVIGATION */
     .bottom-nav {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 58px;
       background: #FFF; border-top: 1px solid var(--line); z-index: 30;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
     }
     .bottom-nav button {
       background: none; border: 0; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 2px; font-size: 10px; font-weight: 700; color: #777;
+      justify-content: center; gap: 2px; font-size: 9.5px; font-weight: 700; color: #777;
     }
     .bottom-nav button.active { color: var(--pink); }
     .bottom-nav button span { font-size: 16px; }
@@ -373,7 +399,7 @@
       .layout { grid-template-columns: 1fr; }
       .sidebar { display: none; }
       .bottom-nav { display: grid; }
-      main { padding-bottom: 70px; }
+      main { padding-bottom: 74px; }
       .content-grid { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
     }
@@ -415,10 +441,11 @@
         <div class="nav-label">Menu Utama</div>
         <nav class="side-nav">
           <button class="nav-item active" data-screen="home"><span class="nav-ico">⌂</span> Beranda</button>
+          <button class="nav-item" data-screen="module"><span class="nav-ico">📖</span> Modul Kokurikuler</button>
           <button class="nav-item" data-screen="lkpd"><span class="nav-ico">▤</span> Isi LKPD (A–F)</button>
           <button class="nav-item" data-screen="submit"><span class="nav-ico">↥</span> Pengumpulan Karya</button>
           <button class="nav-item" data-screen="teacher" id="navTeacher" style="display:none"><span class="nav-ico">★</span> Dashboard Guru</button>
-          <button class="nav-item" data-screen="guide"><span class="nav-ico">ⓘ</span> Panduan & Etika</button>
+          <button class="nav-item" data-screen="guide"><span class="nav-ico">ⓘ</span> Panduan & Alur</button>
         </nav>
       </div>
 
@@ -443,11 +470,11 @@
 
         <div class="hero">
           <div class="hero-content">
-            <div class="hero-kicker">✦ Proyek Pembelajaran Digital</div>
+            <div class="hero-kicker" id="heroKicker">✦ Langkah 1: Pelajari Modul Terlebih Dahulu</div>
             <h2 id="heroTitle">Saatnya Membuat Konten Berdampak Positif</h2>
-            <p id="heroDesc">Kerjakan LKPD secara bertahap bersama kelompok. Jawaban tersimpan langsung ke Google Sheets secara aman dan transparan.</p>
+            <p id="heroDesc">Sebelum mengisi LKPD, pelajari Modul Kokurikuler terlebih dahulu agar kelompokmu memahami anatomi hook 3 detik, alur storyboard, dan 4 pilar etika digital.</p>
             <div class="hero-actions">
-              <button class="btn btn-primary" id="btnHeroAction">Mulai Isi LKPD →</button>
+              <button class="btn btn-primary" id="btnHeroAction">📖 Pelajari Modul Kokurikuler →</button>
               <button class="btn btn-light" id="btnSwitchAccount">Ganti Akun / Masuk Guru</button>
             </div>
           </div>
@@ -455,18 +482,18 @@
 
         <div class="stats">
           <div class="stat-card">
-            <div class="stat-top"><span class="stat-label">Progres LKPD</span><span class="stat-icon" style="background:#E8FAF9">▤</span></div>
+            <div class="stat-top"><span class="stat-label">Status Modul</span><span class="stat-icon" style="background:#E8FAF9">📖</span></div>
+            <div class="stat-value" id="homeModuleStatusVal" style="font-size:16px;">Belum Dibaca</div>
+            <div class="stat-foot" id="homeModuleStatusFoot">Wajib dipelajari sebelum LKPD</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top"><span class="stat-label">Progres LKPD</span><span class="stat-icon" style="background:#FFEAEF">▤</span></div>
             <div class="stat-value" id="homeProgressValue">0/6</div>
             <div class="stat-foot" id="homeProgressFoot">Bagian yang telah selesai</div>
           </div>
           <div class="stat-card">
-            <div class="stat-top"><span class="stat-label">Kelompok Terpilih</span><span class="stat-icon" style="background:#FFEAEF">👥</span></div>
-            <div class="stat-value" id="homeGroupValue" style="font-size:18px">—</div>
-            <div class="stat-foot" id="homeGroupFoot">Belum terhubung ke kelompok</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-top"><span class="stat-label">Status Database</span><span class="stat-icon" style="background:#EBF8F1">✓</span></div>
-            <div class="stat-value" style="font-size:18px;color:#0E8345">Terhubung</div>
+            <div class="stat-top"><span class="stat-label">Kelompok Terpilih</span><span class="stat-icon" style="background:#EBF8F1">👥</span></div>
+            <div class="stat-value" id="homeGroupValue" style="font-size:16px">—</div>
             <div class="stat-foot">Google Sheets Real-Time</div>
           </div>
         </div>
@@ -475,14 +502,26 @@
           <div class="panel">
             <div class="panel-head">
               <div>
-                <h3>Alur Tahapan LKPD</h3>
-                <p>Klik salah satu bagian untuk langsung mengisi</p>
+                <h3>Alur Tahapan Belajar & LKPD</h3>
+                <p>Urutan pengerjaan kokurikuler 90 menit</p>
               </div>
               <span class="status-tag sync" id="progressPctTag">0% Selesai</span>
             </div>
             <div class="panel-body">
               <div class="progress-head"><span>Kemajuan Keseluruhan</span><span id="progressBarLabel">0%</span></div>
               <div class="progress-track"><div class="progress-fill" id="progressFillBar"></div></div>
+              
+              <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#F1FFFE;border:1px solid #B9F8F5;border-radius:12px;cursor:pointer;" onclick="navigateTo('module')">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div class="section-num" style="background:#000;color:#FFF;">📖</div>
+                  <div>
+                    <div class="section-title">Tahap Awal · Modul Kokurikuler</div>
+                    <div class="section-sub">Konsep, 4 Mapel, dan Standar Mutu Konten</div>
+                  </div>
+                </div>
+                <span class="status-tag sync" id="tagModuleStatus">Pelajari ➔</span>
+              </div>
+
               <div class="section-list" id="homeSectionList">
                 <!-- Diisi dinamis via JS -->
               </div>
@@ -518,15 +557,180 @@
         </div>
       </section>
 
+      <!-- SCREEN: MODUL KOKURIKULER (BARU) -->
+      <section class="screen" id="screen-module">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Materi Ajar Kokurikuler • Fase E</div>
+            <h1>Modul Proyek: Membuat Konten TikTok</h1>
+            <p class="page-desc">Pelajari panduan integrasi 4 mata pelajaran, istilah kunci, alur produksi 90 menit, dan rubrik penilaian proyek sebelum mengerjakan LKPD.</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" id="btnDoneReadingModule">✓ Selesai Belajar, Buka LKPD →</button>
+          </div>
+        </div>
+
+        <!-- 1. IDENTITAS & MAPEL KOLABORATOR -->
+        <div class="module-card">
+          <h3>📌 1. Kolaborasi Empat Mata Pelajaran</h3>
+          <p class="sub">Proyek pembuatan konten TikTok memadukan kompetensi dari empat mata pelajaran untuk menjawab tantangan komunikasi positif di era digital.</p>
+          <div class="module-grid-4">
+            <div class="mapel-box" style="border-top:3px solid #FE2C55;">
+              <b>🇮🇩 Bahasa Indonesia</b>
+              <p>Penyusunan naskah, pemilihan diksi yang lugas, perumusan Hook dan Call-to-Action (CTA), serta penulisan caption video yang ringkas, santun, dan persuasif.</p>
+            </div>
+            <div class="mapel-box" style="border-top:3px solid #25F4EE;">
+              <b>💻 Informatika</b>
+              <p>Pengoperasian aplikasi perekam & penyunting video, format rasio 9:16 vertikal, ekspor video, pemahaman algoritma rekomendasi, serta perlindungan data pribadi.</p>
+            </div>
+            <div class="mapel-box" style="border-top:3px solid #000;">
+              <b>🎨 Seni Budaya</b>
+              <p>Estetika visual: sudut pengambilan gambar (camera angle), pencahayaan (lighting), komposisi gerak talent, pemilihan tipografi teks overlay, dan desain cover video.</p>
+            </div>
+            <div class="mapel-box" style="border-top:3px solid #0E8345;">
+              <b>⚖️ PPKn (Etika Bermedia)</b>
+              <p>Penerapan etika ruang digital: izin merekam orang lain, perlindungan privasi, hak cipta musik & gambar, serta pencegahan hoaks, ujaran kebencian, dan cyberbullying.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. TIGA DIMENSI PROFIL LULUSAN & PEMBAGIAN PERAN -->
+        <div class="module-card">
+          <h3>👥 2. Dimensi Karakter & Pembagian Peran Kelompok</h3>
+          <p class="sub">Setiap anggota memegang tanggung jawab spesifik agar produksi video 90 menit berjalan lancar dan efektif.</p>
+          <div class="module-grid-4" style="margin-bottom:14px;">
+            <div class="mapel-box">
+              <b>1. Kreativitas (Inovasi & Troubleshooting)</b>
+              <p>Menemukan sudut pandang unik yang membedakan karyamu dari tren biasa. Mampu mencari solusi kreatif saat audio goyang atau naskah kepanjangan.</p>
+            </div>
+            <div class="mapel-box">
+              <b>2. Kolaborasi (Gotong Royong)</b>
+              <p>Menghargai pendapat teman, menekan ego dalam menentukan gaya visual/musik, dan menyelesaikan tanggung jawab peran tepat waktu.</p>
+            </div>
+            <div class="mapel-box">
+              <b>3. Komunikasi (Penyampaian & Persuasi)</b>
+              <p>Menjelaskan pesan edukatif secara jelas dan meyakinkan penonton melalui konten video maupun presentasi saat gelar karya.</p>
+            </div>
+          </div>
+          <div style="background:#F8F8FA;border:1px solid var(--line);border-radius:12px;padding:14px;">
+            <b style="font-size:12px;display:block;margin-bottom:6px;">5 Peran Wajib dalam Kelompok (Boleh merangkap jika beranggotakan 4 siswa):</b>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;">
+              <span>✍️ <b>Penulis Naskah:</b> Merumuskan hook, naskah isi, dan CTA</span>
+              <span>🎬 <b>Sutradara:</b> Mengarahkan adegan & durasi</span>
+              <span>📱 <b>Kameramen/Talent:</b> Mengambil gambar & akting</span>
+              <span>✂️ <b>Editor:</b> Memotong klip, audio & teks overlay</span>
+              <span>📋 <b>Pencatat Logbook:</b> Mencatat kemajuan & checklist</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ISTILAH KUNCI & STANDAR TEKNIS -->
+        <div class="module-card">
+          <h3>⚡ 3. Lima Istilah Kunci TikTok & Standar Teknis</h3>
+          <p class="sub">Istilah teknis yang wajib dipahami dan diterapkan dalam naskah serta storyboard kelompok.</p>
+          <div class="module-grid-4">
+            <div class="mapel-box">
+              <b>🎯 Hook (0–3 Detik Pertama)</b>
+              <p>Tiga detik pertama video yang menentukan apakah penonton akan berhenti menggulir layar atau melewatinya. Gunakan pertanyaan provokatif, gerakan mengejutkan, atau teks tebal.</p>
+            </div>
+            <div class="mapel-box">
+              <b>📋 Storyboard (4–6 Adegan)</b>
+              <p>Rancangan visual adegan berurutan berupa sketsa/deskripsi kamera, teks dialog, dan musik sebelum proses merekam dimulai.</p>
+            </div>
+            <div class="mapel-box">
+              <b>📣 Call-to-Action (CTA)</b>
+              <p>Kalimat ajakan di akhir video untuk mendorong interaksi bermakna (misal: "Menurutmu bagaimana? Tulis pendapatmu di kolom komentar!").</p>
+            </div>
+            <div class="mapel-box">
+              <b>📈 Engagement & Format 9:16</b>
+              <p>Tingkat suka, simpan, dan bagikan. Video <b>wajib berformat vertikal 9:16</b> dengan durasi pas <b>30–60 detik</b>.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. JADWAL 5 TAHAPAN PROJEK 90 MENIT -->
+        <div class="module-card">
+          <h3>⏱ 4. Jadwal Pelaksanaan 5 Tahapan Proyek (Total 90 Menit)</h3>
+          <p class="sub">Ikuti alur waktu secara disiplin agar video berhasil diproduksi, diedit, dan dievaluasi dalam 1 sesi pertemuan.</p>
+          
+          <div class="module-step">
+            <div class="step-time">0–10 mnt</div>
+            <div class="step-body">
+              <b>Pembukaan & Asesmen Diagnostik (Bagian A)</b>
+              <p>Pengondisian kelas, pembagian kelompok 4–5 siswa, dan pengerjaan pertanyaan pemantik individu mengenai kebiasaan menonton video dan etika awal.</p>
+            </div>
+          </div>
+
+          <div class="module-step">
+            <div class="step-time">10–25 mnt</div>
+            <div class="step-body">
+              <b>Tahap 1: Pengenalan & Konsep Etika (Bagian B)</b>
+              <p>Diskusi kelompok mencocokkan istilah kunci, membedah anatomi video edukatif, dan mencatat contoh nyata 4 pilar etika digital.</p>
+            </div>
+          </div>
+
+          <div class="module-step">
+            <div class="step-time">25–40 mnt</div>
+            <div class="step-body">
+              <b>Tahap 2: Perencanaan & Storyboard (Bagian C)</b>
+              <p>Menentukan kartu ide pembeda, membagi peran, menyusun naskah singkat, serta merancang storyboard 4–6 adegan dengan total durasi 30–60 detik.</p>
+            </div>
+          </div>
+
+          <div class="module-step">
+            <div class="step-time">40–65 mnt</div>
+            <div class="step-body">
+              <b>Tahap 3: Aksi & Produksi Video (Bagian D)</b>
+              <p>Pengambilan rekaman vertikal 9:16 di area sekolah yang diizinkan, penyuntingan dasar di CapCut/VN, pengisian logbook menit ke menit, dan observasi guru.</p>
+            </div>
+          </div>
+
+          <div class="module-step">
+            <div class="step-time">65–75 mnt</div>
+            <div class="step-body">
+              <b>Tahap 4: Uji Kualitas & Kemasan (Bagian E)</b>
+              <p>Pemeriksaan checklist uji kualitas video (hook, suara, teks, durasi, etika), pembuatan deskripsi cover, caption santun, dan 3–5 hashtag relevan.</p>
+            </div>
+          </div>
+
+          <div class="module-step">
+            <div class="step-time">75–90 mnt</div>
+            <div class="step-body">
+              <b>Tahap 5: Refleksi & Gelar Karya (Bagian F & Pengumpulan)</b>
+              <p>Pemutaran video antarkelompok, pemberian apresiasi santun, penilaian antarteman (peer assessment), refleksi individu, dan penyerahan link Google Drive ke guru.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. FORMULA ASESMEN & KONFIRMASI SELESAI -->
+        <div class="module-card">
+          <h3>📊 5. Formula Pembobotan Nilai Akhir Proyek</h3>
+          <p class="sub">Nilai Akhir (NA) Proyek dihitung otomatis oleh guru dengan formula berikut:</p>
+          <div style="background:#000;color:var(--cyan);padding:14px;border-radius:12px;font-family:monospace;font-size:13px;margin-bottom:16px;">
+            NA Projek = (30% × Rata-rata Formatif) + (40% × Skor Produk Video) + (30% × Skor Gelar Karya)
+          </div>
+          <p style="font-size:12px;color:#555;">Seluruh aspek dinilai dengan skala 1–4: <b>1 (Kurang)</b>, <b>2 (Cukup)</b>, <b>3 (Baik)</b>, dan <b>4 (Sangat Baik)</b>.</p>
+          
+          <div style="margin-top:20px;padding:16px;background:var(--cyan-soft);border:1px solid #B7F6F3;border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div>
+              <b style="color:#004D4A;font-size:13px;">Siap Memulai Pengerjaan LKPD?</b>
+              <p style="color:#006A66;font-size:11.5px;margin:2px 0 0;">Pastikan kamu dan kelompokmu sudah memahami seluruh panduan di atas.</p>
+            </div>
+            <button class="btn btn-primary" id="btnConfirmModuleBottom">✓ Tandai Selesai & Mulai Isi LKPD →</button>
+          </div>
+        </div>
+      </section>
+
       <!-- SCREEN: LKPD FORM -->
       <section class="screen" id="screen-lkpd">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
           <div>
             <div class="eyebrow" id="formSectionTag">Bagian A • Individu</div>
             <h1 id="formSectionTitle" style="font-size:22px;">Pertanyaan Pemantik</h1>
             <p class="page-desc" id="formSectionDesc">Jawab pertanyaan berikut dengan jujur menggunakan bahasamu sendiri.</p>
           </div>
-          <div style="text-align:right;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="btn btn-light" id="btnQuickModule" style="padding:5px 11px;font-size:11px;" type="button">📖 Intip Modul</button>
             <span class="status-tag sync" id="autosaveStatus">✓ Tersimpan di Sheets</span>
           </div>
         </div>
@@ -678,9 +882,10 @@
   <!-- BOTTOM NAVIGATION FOR MOBILE -->
   <nav class="bottom-nav">
     <button class="active" data-screen="home"><span>⌂</span>Beranda</button>
-    <button data-screen="lkpd"><span>▤</span>Isi LKPD</button>
+    <button data-screen="module"><span>📖</span>Modul</button>
+    <button data-screen="lkpd"><span>▤</span>LKPD</button>
     <button data-screen="submit"><span>↥</span>Kumpul</button>
-    <button data-screen="guide"><span>ⓘ</span>Panduan</button>
+    <button data-screen="guide"><span>ⓘ</span>Alur</button>
   </nav>
 
   <!-- TOAST LIVE -->
@@ -757,11 +962,38 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL: QUICK REFERENCE MODUL SAAT MENGISI LKPD -->
+  <div class="modal-backdrop" id="quickModuleModal">
+    <div class="modal-card" style="max-width:680px;">
+      <div class="modal-head">
+        <h2>📖 Acuan Cepat Modul Kokurikuler</h2>
+        <button class="modal-close" onclick="closeQuickModuleModal()">✕</button>
+      </div>
+      <div style="display:grid;gap:12px;font-size:12.5px;">
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid var(--pink);">
+          <b>Hook 3 Detik:</b> Visual mengejutkan, pertanyaan memancing, atau masalah nyata yang membuat penonton berhenti scrolling.
+        </div>
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid var(--cyan);">
+          <b>Durasi & Format Storyboard:</b> Wajib berorientasi vertikal 9:16 dengan total durasi 4–6 adegan berkisar <b>30–60 detik</b>.
+        </div>
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid #000;">
+          <b>Call-to-Action (CTA):</b> Ajakan penutup yang spesifik dan santun, misalnya ajakan berdiskusi di komentar atau membagikan kebiasaan positif.
+        </div>
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;border-left:4px solid #0E8345;">
+          <b>4 Pilar Etika:</b> 1) Minta izin yang direkam; 2) Lindungi data pribadi; 3) Gunakan musik bebas hak cipta; 4) Bebas hoaks & cyberbullying.
+        </div>
+      </div>
+      <div style="margin-top:18px;text-align:right;">
+        <button class="btn btn-primary" onclick="closeQuickModuleModal()">Kembali Mengisi LKPD</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 /**
- * LKPD DIGITAL CLIENT CONTROLLER
+ * LKPD DIGITAL & MODUL KOKURIKULER CLIENT CONTROLLER
  * Full Real-Time Connection with Google Sheets & SweetAlert2 CDN
  */
 
@@ -784,6 +1016,41 @@ let initialDataCache = null;
 
 const $ = id => document.getElementById(id);
 
+// Cek apakah modul sudah dipelajari
+function isModuleRead() {
+  const key = 'lkpd_module_read_' + (currentUser ? (currentUser.groupId || currentUser.userId) : 'guest');
+  return localStorage.getItem(key) === 'true';
+}
+
+function markModuleRead() {
+  const key = 'lkpd_module_read_' + (currentUser ? (currentUser.groupId || currentUser.userId) : 'guest');
+  localStorage.setItem(key, 'true');
+  updateModuleStatusUI();
+}
+
+function updateModuleStatusUI() {
+  const read = isModuleRead();
+  const statusVal = $('homeModuleStatusVal');
+  const statusFoot = $('homeModuleStatusFoot');
+  const tagStatus = $('tagModuleStatus');
+  const heroKicker = $('heroKicker');
+  const heroBtn = $('btnHeroAction');
+
+  if (read) {
+    if (statusVal) { statusVal.textContent = 'Sudah Dipelajari ✓'; statusVal.style.color = '#0E8345'; }
+    if (statusFoot) statusFoot.textContent = 'Siap mengerjakan LKPD';
+    if (tagStatus) { tagStatus.className = 'status-tag done'; tagStatus.textContent = 'Selesai ✓'; }
+    if (heroKicker) heroKicker.textContent = '✦ Langkah 2: Lengkapi LKPD Kelompok';
+    if (heroBtn) heroBtn.textContent = 'Lanjutkan Isi LKPD →';
+  } else {
+    if (statusVal) { statusVal.textContent = 'Belum Dibaca'; statusVal.style.color = 'var(--pink)'; }
+    if (statusFoot) statusFoot.textContent = 'Wajib dipelajari sebelum LKPD';
+    if (tagStatus) { tagStatus.className = 'status-tag warn'; tagStatus.textContent = 'Wajib Dibaca'; }
+    if (heroKicker) heroKicker.textContent = '✦ Langkah 1: Pelajari Modul Terlebih Dahulu';
+    if (heroBtn) heroBtn.textContent = '📖 Pelajari Modul Kokurikuler →';
+  }
+}
+
 // === 2. API CALL LAYER (DUAL-MODE: FETCH KE CLOUDFLARE WORKER / GOOGLE SCRIPT RUN) ===
 async function apiCall(action, payload = {}) {
   const reqData = {
@@ -795,7 +1062,6 @@ async function apiCall(action, payload = {}) {
     authPin: currentUser ? currentUser.pin : ''
   };
 
-  // Mode 1: Jika berjalan di dalam Google Apps Script HtmlService
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     return new Promise((resolve) => {
       google.script.run
@@ -805,10 +1071,9 @@ async function apiCall(action, payload = {}) {
     });
   }
 
-  // Mode 2: Jika berjalan di Cloudflare Pages / Localhost via Fetch ke Cloudflare Worker
   const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '';
   if (!apiUrl || apiUrl.includes('YOUR_DEPLOYMENT_ID') || apiUrl.includes('namakamu')) {
-    console.warn('API_URL belum dikonfigurasi di config.js. Pastikan worker.js sudah dideploy.');
+    console.warn('API_URL belum dikonfigurasi di config.js.');
   }
 
   try {
@@ -845,8 +1110,7 @@ function showSuccessModal(title, text) {
     text: text,
     background: '#161823',
     color: '#FFF',
-    confirmButtonColor: '#25F4EE',
-    customClass: { confirmButton: 'swal-btn-cyan' }
+    confirmButtonColor: '#25F4EE'
   });
 }
 
@@ -879,6 +1143,7 @@ function showConfirmModal(title, text, confirmText = 'Ya, Lanjutkan') {
 // === 4. INISIALISASI APLIKASI ===
 async function initApp() {
   updateUserUI();
+  updateModuleStatusUI();
   await loadInitialPublicData();
 
   if (currentUser) {
@@ -912,6 +1177,7 @@ function updateUserUI() {
     $('sideAvatar').textContent = '?';
     $('homeGroupValue').textContent = '—';
   }
+  updateModuleStatusUI();
 }
 
 async function loadInitialPublicData() {
@@ -992,7 +1258,6 @@ $('btnDoStudentLogin').addEventListener('click', async () => {
       showErrorModal('Perhatian', 'Masukkan nama lengkap siswa baru.');
       return;
     }
-    // Daftarkan siswa ke Google Sheets
     toastLive('Mendaftarkan siswa ke Google Sheets...');
     const regRes = await apiCall('registerStudent', { nama: newName, groupId: groupId, kelas: selectedGroup ? selectedGroup.kelas : 'X-1' });
     if (regRes.status === 'success' && regRes.data) {
@@ -1076,8 +1341,31 @@ $('btnTriggerSetup').addEventListener('click', async () => {
   }
 });
 
-// === 6. NAVIGASI ANTAR SCREEN ===
-function navigateTo(screenId) {
+// === 6. NAVIGASI ANTAR SCREEN & PREREQUISITE GUARD ===
+function navigateTo(screenId, bypassGate = false) {
+  // Prerequisite check: Jika siswa membuka LKPD tapi belum mempelajari modul
+  if (screenId === 'lkpd' && !bypassGate && (!currentUser || currentUser.role === 'siswa') && !isModuleRead()) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Pelajari Modul Terlebih Dahulu',
+      text: 'Sebelum mengisi LKPD, luangkan waktu membaca Modul Kokurikuler agar kelompokmu memahami konsep Hook 3 detik, alur storyboard, dan etika digital.',
+      confirmButtonText: 'Buka Modul Sekarang ➔',
+      showCancelButton: true,
+      cancelButtonText: 'Tetap Lanjut ke LKPD',
+      background: '#161823',
+      color: '#FFF',
+      confirmButtonColor: '#25F4EE',
+      cancelButtonColor: '#43434A'
+    }).then(result => {
+      if (result.isConfirmed) {
+        navigateTo('module');
+      } else {
+        navigateTo('lkpd', true);
+      }
+    });
+    return;
+  }
+
   currentScreen = screenId;
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === 'screen-' + screenId));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.screen === screenId));
@@ -1088,6 +1376,8 @@ function navigateTo(screenId) {
     renderActiveSectionForm();
   } else if (screenId === 'teacher') {
     loadTeacherDashboard();
+  } else if (screenId === 'module') {
+    updateModuleStatusUI();
   }
 }
 
@@ -1099,10 +1389,28 @@ function setupEventListeners() {
   $('userMenuBtn').addEventListener('click', openAccountModal);
   $('btnCloseAccountModal').addEventListener('click', closeAccountModal);
   $('btnSwitchAccount').addEventListener('click', openAccountModal);
+  
   $('btnHeroAction').addEventListener('click', () => {
-    if (!currentUser) openAccountModal();
-    else navigateTo('lkpd');
+    if (!currentUser) {
+      openAccountModal();
+    } else if (!isModuleRead()) {
+      navigateTo('module');
+    } else {
+      navigateTo('lkpd');
+    }
   });
+
+  // Tombol selesai modul
+  const handleDoneModule = () => {
+    markModuleRead();
+    showSuccessModal('Modul Selesai Dipelajari', 'Bagus! Kelompokmu sudah siap mengisi lembar kerja LKPD.');
+    navigateTo('lkpd', true);
+  };
+  $('btnDoneReadingModule').addEventListener('click', handleDoneModule);
+  $('btnConfirmModuleBottom').addEventListener('click', handleDoneModule);
+
+  // Quick Module Modal
+  $('btnQuickModule').addEventListener('click', openQuickModuleModal);
 
   $('btnPrevSection').addEventListener('click', goToPrevSection);
   $('btnSaveContinue').addEventListener('click', () => saveActiveSection(true));
@@ -1116,6 +1424,9 @@ function setupEventListeners() {
   $('btnExportCsv').addEventListener('click', exportTeacherCsv);
 }
 
+function openQuickModuleModal() { $('quickModuleModal').classList.add('open'); }
+function closeQuickModuleModal() { $('quickModuleModal').classList.remove('open'); }
+
 // === 7. PENGAMBILAN & PENYIMPANAN JAWABAN REAL-TIME DARI GOOGLE SHEETS ===
 async function loadMyAnswersFromSheets() {
   if (!currentUser || currentUser.role !== 'siswa') return;
@@ -1124,11 +1435,9 @@ async function loadMyAnswersFromSheets() {
   const res = await apiCall('getMyAnswers', { groupId: currentUser.groupId });
   if (res.status === 'success' && res.data) {
     localAnswers = {};
-    // Gabungkan jawaban kelompok
     (res.data.groupAnswers || []).forEach(row => {
       Object.assign(localAnswers, row.payload || {});
     });
-    // Gabungkan jawaban individu (tidak boleh menimpa jika bukan milik sendiri)
     (res.data.individualAnswers || []).forEach(row => {
       Object.assign(localAnswers, row.payload || {});
     });
@@ -1573,20 +1882,17 @@ async function saveActiveSection(andContinue = false, isSilentAutosave = false) 
 
   const s = SECTIONS.find(x => x.id === activeSectionId);
 
-  // Ambil isian yang sesuai untuk bagian aktif
   const payloadToSave = {};
   document.querySelectorAll('#dynamicFormContainer [data-save]').forEach(el => {
     const key = el.dataset.save;
     payloadToSave[key] = (el.type === 'checkbox') ? el.checked : el.value;
   });
 
-  // Khusus Bagian F: pisahkan group dan individual
   if (activeSectionId === 'F') {
     const groupFields = { f_group1: payloadToSave.f_group1, f_group2: payloadToSave.f_group2, f_group3: payloadToSave.f_group3 };
     const indFields = { ...payloadToSave };
     delete indFields.f_group1; delete indFields.f_group2; delete indFields.f_group3;
 
-    // Simpan group
     await apiCall('saveAnswer', {
       section: 'F',
       scope: 'group',
@@ -1594,7 +1900,6 @@ async function saveActiveSection(andContinue = false, isSilentAutosave = false) 
       payload: groupFields,
       status: andContinue ? 'Terkumpul' : 'Draf'
     });
-    // Simpan individual
     const resInd = await apiCall('saveAnswer', {
       section: 'F',
       scope: 'individual',
