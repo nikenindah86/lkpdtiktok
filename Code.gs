@@ -136,6 +136,9 @@ function handleApiRequest_(action, payload) {
     case 'setupDatabase':
       result = setupDatabase();
       break;
+    case 'init6Kelompok36Siswa':
+      result = init6Kelompok36Siswa(payload);
+      break;
     case 'getBootstrap':
     case 'bootstrap':
       result = apiGetBootstrap(payload);
@@ -269,54 +272,133 @@ function setupDatabase() {
 /** Inisialisasi konfigurasi awal dan akun starter agar database langsung dapat digunakan */
 function seedInitialData_(ss) {
   try {
-    const penggunaSheet = ss.getSheetByName('Pengguna');
-    if (!penggunaSheet || penggunaSheet.getLastRow() > 1) return;
-
-    const now = now_();
-
-    // 1. Sheet Konfigurasi
-    const configSheet = ss.getSheetByName('Konfigurasi');
-    if (configSheet && configSheet.getLastRow() <= 1) {
-      configSheet.getRange(2, 1, 3, 3).setValues([
-        ['GURU_PIN', '123456', now],
-        ['SEKOLAH', 'SMA Negeri 1 Bancar', now],
-        ['MATA_PELAJARAN', 'Kokurikuler Fase E - Konten TikTok', now]
-      ]);
-    }
-
-    // 2. Sheet Pengguna (1 Guru, 5 Siswa)
-    penggunaSheet.getRange(2, 1, 6, 7).setValues([
-      ['USR-GURU-01', 'guru@sman1bancar.sch.id', 'Ibu Niken Indah, S.Pd.', 'guru', 'Semua', true, now],
-      ['USR-SISWA-01', 'alya@sman1bancar.sch.id', 'Alya Safitri', 'siswa', 'X-1', true, now],
-      ['USR-SISWA-02', 'budi@sman1bancar.sch.id', 'Budi Santoso', 'siswa', 'X-1', true, now],
-      ['USR-SISWA-03', 'citra@sman1bancar.sch.id', 'Citra Dewi', 'siswa', 'X-1', true, now],
-      ['USR-SISWA-04', 'dimas@sman1bancar.sch.id', 'Dimas Prayoga', 'siswa', 'X-1', true, now],
-      ['USR-SISWA-05', 'eka@sman1bancar.sch.id', 'Eka Pratama', 'siswa', 'X-1', true, now]
-    ]);
-
-    // 3. Sheet Kelompok (2 Kelompok)
-    const kelompokSheet = ss.getSheetByName('Kelompok');
-    if (kelompokSheet && kelompokSheet.getLastRow() <= 1) {
-      kelompokSheet.getRange(2, 1, 2, 8).setValues([
-        ['GRP-01', 'Kelompok 1 (Kreatif)', 'X-1', now, 'USR-GURU-01', 'aktif', now, now],
-        ['GRP-02', 'Kelompok 2 (Inspirasi)', 'X-1', now, 'USR-GURU-01', 'aktif', now, now]
-      ]);
-    }
-
-    // 4. Sheet AnggotaKelompok
-    const anggotaSheet = ss.getSheetByName('AnggotaKelompok');
-    if (anggotaSheet && anggotaSheet.getLastRow() <= 1) {
-      anggotaSheet.getRange(2, 1, 5, 5).setValues([
-        ['MBR-01', 'GRP-01', 'USR-SISWA-01', 'Alya Safitri', 'aktif'],
-        ['MBR-02', 'GRP-01', 'USR-SISWA-02', 'Budi Santoso', 'aktif'],
-        ['MBR-03', 'GRP-01', 'USR-SISWA-03', 'Citra Dewi', 'aktif'],
-        ['MBR-04', 'GRP-02', 'USR-SISWA-04', 'Dimas Prayoga', 'aktif'],
-        ['MBR-05', 'GRP-02', 'USR-SISWA-05', 'Eka Pratama', 'aktif']
-      ]);
-    }
+    init6Kelompok36SiswaInternal_(ss, false);
   } catch (err) {
     console.error('seedInitialData_ warning: ' + safeErrorMessage_(err));
   }
+}
+
+/**
+ * Endpoint API & Helper Fungsi untuk Menginisialisasi 6 Kelompok dan 36 Siswa (Kelas X Fase E).
+ * Setiap kelompok terdiri dari 6 siswa.
+ * Guru dapat memicu fungsi ini langsung lewat tombol di Dashboard Guru atau Apps Script.
+ */
+function init6Kelompok36Siswa(payload) {
+  return apiCall_(function () {
+    const ss = getDatabaseSpreadsheet_(false);
+    const forceReset = payload && payload.forceReset === true;
+    return init6Kelompok36SiswaInternal_(ss, forceReset);
+  });
+}
+
+function init6Kelompok36SiswaInternal_(ss, forceReset) {
+  const now = now_();
+
+  // 1. Sheet Konfigurasi
+  const configSheet = ss.getSheetByName('Konfigurasi');
+  if (configSheet) {
+    const defaultConfigs = [
+      ['GURU_PIN', '123456', now],
+      ['SEKOLAH', 'SMA Negeri 1 Bancar', now],
+      ['MATA_PELAJARAN', 'Kokurikuler Fase E - Konten TikTok', now],
+      ['JUMLAH_KELOMPOK', '6', now],
+      ['JUMLAH_SISWA', '36', now]
+    ];
+    defaultConfigs.forEach(function (item) {
+      upsertByKeys_('Konfigurasi', ['key'], { key: item[0], value: item[1], updatedAt: item[2] });
+    });
+  }
+
+  // 2. Akun Guru Utama
+  upsertByKeys_('Pengguna', ['userId'], {
+    userId: 'USR-GURU-01',
+    email: 'guru@sman1bancar.sch.id',
+    nama: 'Ibu Niken Indah, S.Pd.',
+    role: 'guru',
+    kelas: 'Semua',
+    aktif: true,
+    createdAt: now
+  });
+
+  // 3. Daftarkan 6 Kelompok Resmi
+  const groupDefs = [
+    { id: 'GRP-01', nama: 'Kelompok 1' },
+    { id: 'GRP-02', nama: 'Kelompok 2' },
+    { id: 'GRP-03', nama: 'Kelompok 3' },
+    { id: 'GRP-04', nama: 'Kelompok 4' },
+    { id: 'GRP-05', nama: 'Kelompok 5' },
+    { id: 'GRP-06', nama: 'Kelompok 6' }
+  ];
+
+  groupDefs.forEach(function (g) {
+    upsertByKeys_('Kelompok', ['groupId'], {
+      groupId: g.id,
+      namaKelompok: g.nama,
+      kelas: 'X-1',
+      tanggalKegiatan: now,
+      createdBy: 'USR-GURU-01',
+      status: 'aktif',
+      createdAt: now,
+      updatedAt: now
+    });
+  });
+
+  // 4. Daftar 36 Siswa (6 Siswa per Kelompok)
+  const starterNames = [
+    // Kelompok 1 (1 - 6)
+    'Ahmad Fauzi', 'Alya Safitri', 'Anisa Rahma', 'Budi Santoso', 'Citra Dewi', 'Daffa Pratama',
+    // Kelompok 2 (7 - 12)
+    'Dimas Prayoga', 'Eka Saputra', 'Fajar Ramadhan', 'Gita Permata', 'Hana Lestari', 'Ilham Hidayat',
+    // Kelompok 3 (13 - 18)
+    'Jessica Amanda', 'Kevin Aditya', 'Laras Salsabila', 'Muhammad Rizky', 'Nabila Zahra', 'Naufal Hakim',
+    // Kelompok 4 (19 - 24)
+    'Olivia Putri', 'Panji Kusuma', 'Putri Anggraini', 'Raditya Pratama', 'Rania Azzahra', 'Rendy Saputra',
+    // Kelompok 5 (25 - 30)
+    'Sabrina Maharani', 'Samuel Christian', 'Siti Nurhaliza', 'Sultan Alfarizi', 'Tiara Andini', 'Wahyu Wicaksono',
+    // Kelompok 6 (31 - 36)
+    'Wisnu Wardhana', 'Yoga Pratama', 'Zahra Amelia', 'Zidan Firdaus', 'Alifia Zahra', 'Bagas Kurniawan'
+  ];
+
+  for (let i = 1; i <= 36; i++) {
+    const padNum = (i < 10 ? '0' : '') + i;
+    const userId = 'USR-SISWA-' + padNum;
+    const groupIdx = Math.floor((i - 1) / 6);
+    const targetGroup = groupDefs[groupIdx];
+    const defaultName = starterNames[i - 1] || ('Siswa ' + padNum);
+
+    // Cek apakah pengguna sudah ada jika bukan forceReset
+    let studentName = defaultName;
+    if (!forceReset) {
+      const existingUsers = readRows_('Pengguna');
+      const found = existingUsers.find(function (u) { return String(u.userId) === userId; });
+      if (found && found.nama) studentName = found.nama;
+    }
+
+    upsertByKeys_('Pengguna', ['userId'], {
+      userId: userId,
+      email: 'siswa' + padNum + '@sman1bancar.sch.id',
+      nama: studentName,
+      role: 'siswa',
+      kelas: 'X-1',
+      aktif: true,
+      createdAt: now
+    });
+
+    upsertByKeys_('AnggotaKelompok', ['userId'], {
+      membershipId: 'MBR-' + padNum,
+      groupId: targetGroup.id,
+      userId: userId,
+      namaTampilan: studentName,
+      status: 'aktif'
+    });
+  }
+
+  return {
+    totalKelompok: 6,
+    totalSiswa: 36,
+    siswaPerKelompok: 6,
+    message: 'Database berhasil diinisialisasi untuk 6 Kelompok dan 36 Siswa (6 siswa per kelompok). Nama siswa di sheet Pengguna dapat diedit kapan saja.'
+  };
 }
 
 // === BOILERPLATE: API RESPONSE DAN PENANGANAN ERROR ===
@@ -1237,6 +1319,18 @@ function apiGetTeacherDashboard(filters) {
       const submittedCount = groupSubmissions.filter(function (s) { return String(s.status) === 'Terkumpul' || String(s.status) === 'Diperiksa'; }).length;
       const grade = grades.find(function (g) { return String(g.groupId || '') === groupId; });
       const groupName = normalizeStoredText_(group.namaKelompok || 'Kelompok tanpa nama');
+
+      // Progres Tugas Individu dari 6 anggota
+      const aDoneCount = memberIds.filter(function (id) {
+        return iAnswers.some(function (a) { return String(a.userId) === id && String(a.bagian) === 'A' && String(a.status) === 'Terkumpul'; });
+      }).length;
+      const fDoneCount = memberIds.filter(function (id) {
+        return iAnswers.some(function (a) { return String(a.userId) === id && String(a.bagian) === 'F' && String(a.status) === 'Terkumpul'; });
+      }).length;
+
+      // Status Pengumpulan Video Final Google Drive
+      const videoSub = groupSubmissions.find(function (s) { return s.jenisProduk === 'video_final'; });
+
       return {
         groupId: groupId,
         namaKelompok: groupName,
@@ -1247,6 +1341,19 @@ function apiGetTeacherDashboard(filters) {
         bagianSelesai: completedCount,
         totalBagian: 6,
         jumlahAnggota: members.length,
+        anggotaSelesaiA: aDoneCount,
+        anggotaSelesaiF: fDoneCount,
+        bagianKelompokSelesai: ['B', 'C', 'D', 'E'].filter(function (s) { return done[s]; }).length,
+        hasVideo: !!(videoSub && (videoSub.status === 'Terkumpul' || videoSub.status === 'Diperiksa')),
+        videoUrl: videoSub ? String(videoSub.urlDrive || '') : '',
+        members: members.map(function (m) {
+          return {
+            userId: String(m.userId),
+            nama: normalizeStoredText_(m.namaTampilan || ''),
+            doneA: iAnswers.some(function (a) { return String(a.userId) === String(m.userId) && String(a.bagian) === 'A' && String(a.status) === 'Terkumpul'; }),
+            doneF: iAnswers.some(function (a) { return String(a.userId) === String(m.userId) && String(a.bagian) === 'F' && String(a.status) === 'Terkumpul'; })
+          };
+        }),
         jumlahKomponenTerkumpul: submittedCount,
         totalKomponen: APP_CONFIG.SUBMISSION_TYPES.length,
         nilaiLKPD: grade && grade.nilaiLKPD !== '' ? grade.nilaiLKPD : '',
@@ -1271,6 +1378,7 @@ function apiGetTeacherDashboard(filters) {
       pagination: { page: page, pageSize: pageSize, total: total, totalPages: Math.max(1, Math.ceil(total / pageSize)) },
       summary: {
         totalKelompok: groups.length,
+        totalSiswa: memberships.length,
         terkumpulLengkap: groups.filter(function (g) {
           const id = String(g.groupId || '');
           const n = submissions.filter(function (s) { return String(s.groupId || '') === id && ['Terkumpul', 'Diperiksa'].indexOf(String(s.status)) !== -1; }).length;

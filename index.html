@@ -802,34 +802,39 @@
           <div>
             <div class="eyebrow">Ruang Pengajar • Live Google Sheets</div>
             <h1>Dashboard Pemantauan & Penilaian Guru</h1>
-            <p class="page-desc">Pantau progres pengisian siswa secara real-time, periksa video, dan berikan nilai serta umpan balik.</p>
+            <p class="page-desc">Pantau progres pengisian 6 kelompok dan 36 siswa secara real-time, periksa tugas kelompok & individu, serta berikan nilai.</p>
           </div>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-dark" id="btnRefreshTeacher">⟳ Muat Ulang</button>
-            <button class="btn btn-primary" id="btnNewGroup">+ Kelompok Baru</button>
+            <button class="btn btn-primary" id="btnInit6Groups">⚡ Inisialisasi 6 Kelompok (36 Siswa)</button>
+            <button class="btn btn-light" id="btnNewGroup">+ Kelompok Lain</button>
           </div>
         </div>
 
-        <div class="teacher-stat-grid">
+        <div class="teacher-stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
           <div class="teacher-stat">
-            <span>Total Kelompok Terdaftar</span>
+            <span>Total Kelompok</span>
             <strong id="statTotalGroups">0</strong>
           </div>
           <div class="teacher-stat">
-            <span>Sudah Mengumpulkan Lengkap</span>
+            <span>Total Siswa Terdaftar</span>
+            <strong id="statTotalStudents" style="color:var(--cyan)">0</strong>
+          </div>
+          <div class="teacher-stat">
+            <span>Karya Video Terkumpul</span>
             <strong id="statSubmittedGroups" style="color:var(--green)">0</strong>
           </div>
           <div class="teacher-stat">
-            <span>Perlu Pemeriksaan Guru</span>
+            <span>Perlu Penilaian Guru</span>
             <strong id="statPendingReview" style="color:var(--pink)">0</strong>
           </div>
         </div>
 
         <div class="table-tools">
-          <input type="search" id="teacherSearchInput" placeholder="Cari nama kelompok atau kelas...">
+          <input type="search" id="teacherSearchInput" placeholder="Cari nama kelompok, kelas, atau anggota...">
           <select id="teacherStatusFilter">
             <option value="all">Semua Status</option>
-            <option value="sent">Terkumpul</option>
+            <option value="sent">Terkumpul Lengkap</option>
             <option value="draft">Dalam Pengerjaan</option>
           </select>
           <button class="btn btn-light" id="btnExportCsv">📥 Ekspor CSV Rekap</button>
@@ -839,12 +844,12 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Nama Kelompok</th>
+                <th style="min-width:200px;">Kelompok & Anggota (6 Siswa)</th>
                 <th>Kelas</th>
-                <th>Progres LKPD</th>
-                <th>Status Pengumpulan</th>
+                <th style="min-width:180px;">Tugas Kelompok (B–E) & Video</th>
+                <th style="min-width:180px;">Tugas Individu (A & F)</th>
                 <th>Nilai LKPD</th>
-                <th>Aksi</th>
+                <th style="text-align:right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="teacherTableBody">
@@ -952,7 +957,7 @@
 
   <!-- MODAL: PERIKSA & NILAI KELOMPOK (GURU) -->
   <div class="modal-backdrop" id="gradeModal">
-    <div class="modal-card" style="max-width:700px;">
+    <div class="modal-card" style="max-width:880px;max-height:90vh;overflow-y:auto;">
       <div class="modal-head">
         <h2 id="modalGradeGroupName">Detail & Penilaian Kelompok</h2>
         <button class="modal-close" onclick="closeGradeModal()">✕</button>
@@ -1421,6 +1426,8 @@ function setupEventListeners() {
   $('teacherSearchInput').addEventListener('input', renderTeacherTable);
   $('teacherStatusFilter').addEventListener('change', renderTeacherTable);
   $('btnNewGroup').addEventListener('click', promptNewGroup);
+  const btnInit6 = $('btnInit6Groups');
+  if (btnInit6) btnInit6.addEventListener('click', handleInit6Groups);
   $('btnExportCsv').addEventListener('click', exportTeacherCsv);
 }
 
@@ -2006,8 +2013,8 @@ async function submitFinalWorkToSheets() {
   }
 }
 
-// === 11. DASHBOARD GURU & PENILAIAN ===
 let teacherDashboardData = null;
+let currentInspectorData = null;
 
 async function loadTeacherDashboard() {
   if (!currentUser || currentUser.role !== 'guru') return;
@@ -2017,6 +2024,7 @@ async function loadTeacherDashboard() {
   if (res.status === 'success' && res.data) {
     teacherDashboardData = res.data;
     $('statTotalGroups').textContent = res.data.summary.totalKelompok || 0;
+    $('statTotalStudents').textContent = res.data.summary.totalSiswa || (res.data.summary.totalKelompok * 6) || 36;
     $('statSubmittedGroups').textContent = res.data.summary.terkumpulLengkap || 0;
     $('statPendingReview').textContent = res.data.summary.perluDiperiksa || 0;
     renderTeacherTable();
@@ -2031,7 +2039,8 @@ function renderTeacherTable() {
   const filter = $('teacherStatusFilter').value;
 
   const rows = teacherDashboardData.rows.filter(r => {
-    const matchSearch = r.namaKelompok.toLowerCase().includes(search) || r.kelas.toLowerCase().includes(search);
+    const memberMatch = (r.members || []).some(m => (m.nama || '').toLowerCase().includes(search));
+    const matchSearch = r.namaKelompok.toLowerCase().includes(search) || r.kelas.toLowerCase().includes(search) || memberMatch;
     const matchFilter = (filter === 'all') || (r.status === filter);
     return matchSearch && matchFilter;
   });
@@ -2041,97 +2050,295 @@ function renderTeacherTable() {
     return;
   }
 
-  $('teacherTableBody').innerHTML = rows.map(r => `
-    <tr>
-      <td>
-        <strong>${escapeHtml(r.namaKelompok)}</strong>
-        <div style="font-size:11px;color:var(--muted);">${r.jumlahAnggota} Siswa Terdaftar</div>
-      </td>
-      <td>${escapeHtml(r.kelas || 'X-1')}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="height:6px;width:70px;background:#EAEAEF;border-radius:4px;overflow:hidden;">
-            <div style="height:100%;width:${r.progress}%;background:linear-gradient(90deg,var(--cyan),var(--pink));"></div>
+  $('teacherTableBody').innerHTML = rows.map(r => {
+    const memberList = (r.members || []).map(m => m.nama).filter(Boolean);
+    const memberSummary = memberList.length ? memberList.join(', ') : 'Belum ada siswa';
+    const isFullA = r.anggotaSelesaiA === r.jumlahAnggota && r.jumlahAnggota > 0;
+    const isFullF = r.anggotaSelesaiF === r.jumlahAnggota && r.jumlahAnggota > 0;
+
+    return `
+      <tr>
+        <td>
+          <div style="font-weight:800;font-size:14px;color:var(--ink);">${escapeHtml(r.namaKelompok)}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin:3px 0;">
+            <span class="status-tag done" style="font-size:10px;padding:2px 7px;">👥 ${r.jumlahAnggota || 6} Siswa</span>
           </div>
-          <b>${r.progress}%</b>
-        </div>
-      </td>
-      <td>
-        <span class="status-tag ${r.status === 'sent' ? 'done' : 'draft'}">
-          ${r.status === 'sent' ? 'Terkumpul' : 'Dalam Pengerjaan'}
-        </span>
-      </td>
-      <td><b>${r.nilaiLKPD !== '' ? r.nilaiLKPD : '—'}</b></td>
-      <td>
-        <button class="btn btn-dark" style="padding:6px 12px;font-size:11.5px;" onclick="inspectGroup('${r.groupId}')">Periksa & Nilai ↗</button>
-      </td>
-    </tr>
-  `).join('');
+          <div style="font-size:11px;color:var(--muted);max-width:260px;line-height:1.3;" title="${escapeHtml(memberSummary)}">
+            ${escapeHtml(memberSummary)}
+          </div>
+        </td>
+        <td><span style="font-weight:700;color:var(--muted);">${escapeHtml(r.kelas || 'X-1')}</span></td>
+        <td>
+          <div style="margin-bottom:6px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+              <span>Tahap B–E: <b>${r.bagianKelompokSelesai || 0}/4 Selesai</b></span>
+              <b>${r.progress}%</b>
+            </div>
+            <div style="height:6px;width:100%;max-width:130px;background:#EAEAEF;border-radius:4px;overflow:hidden;">
+              <div style="height:100%;width:${r.progress}%;background:linear-gradient(90deg,var(--cyan),var(--pink));"></div>
+            </div>
+          </div>
+          <div style="font-size:11px;">
+            ${r.hasVideo 
+              ? `<a href="${escapeHtml(r.videoUrl)}" target="_blank" rel="noopener" style="color:var(--green);font-weight:700;text-decoration:none;">🎬 Video Drive Terkumpul ↗</a>` 
+              : `<span style="color:var(--muted);">🎬 Video: Belum dikumpul</span>`}
+          </div>
+        </td>
+        <td>
+          <div style="display:grid;gap:4px;font-size:11.5px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="status-tag ${isFullA ? 'done' : 'draft'}" style="font-size:10px;padding:2px 7px;">
+                Bagian A: ${r.anggotaSelesaiA || 0}/${r.jumlahAnggota || 6} Siswa
+              </span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="status-tag ${isFullF ? 'done' : 'draft'}" style="font-size:10px;padding:2px 7px;">
+                Bagian F: ${r.anggotaSelesaiF || 0}/${r.jumlahAnggota || 6} Siswa
+              </span>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div style="font-size:16px;font-weight:800;color:${r.nilaiLKPD !== '' ? 'var(--cyan)' : 'var(--muted)'};">
+            ${r.nilaiLKPD !== '' ? r.nilaiLKPD : '—'}
+          </div>
+          ${r.catatanGuru ? `<div style="font-size:10px;color:var(--muted);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(r.catatanGuru)}">"${escapeHtml(r.catatanGuru)}"</div>` : ''}
+        </td>
+        <td style="text-align:right;">
+          <button class="btn btn-dark" style="padding:7px 12px;font-size:11.5px;white-space:nowrap;" onclick="inspectGroup('${r.groupId}')">Periksa & Nilai ↗</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 async function inspectGroup(groupId) {
   $('gradeModal').classList.add('open');
   $('modalGradeGroupName').textContent = 'Memuat data kelompok...';
-  $('modalGradeContent').innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);">Mengambil berkas dan jawaban dari Google Sheets...</div>';
+  $('modalGradeContent').innerHTML = '<div style="text-align:center;padding:36px;color:var(--muted);">Mengambil berkas dan seluruh jawaban kelompok & individu dari Google Sheets...</div>';
 
   const res = await apiCall('getGroupDetails', { groupId: groupId });
   if (res.status === 'success' && res.data) {
+    currentInspectorData = res.data;
     const d = res.data;
     $('modalGradeGroupName').textContent = `Pemeriksaan: ${escapeHtml(d.group.namaKelompok)}`;
 
     const currentGrade = d.grade ? d.grade.nilaiLKPD : '';
     const currentNote = d.grade ? d.grade.catatanGuru : '';
 
+    // Render Submissions (Video, Storyboard, dll)
     let subsHtml = '<p style="color:var(--muted);font-size:12px;">Belum ada berkas pengumpulan.</p>';
     if (d.submissions && d.submissions.length) {
       subsHtml = d.submissions.map(s => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#F8F8FA;border-radius:8px;margin-bottom:6px;font-size:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#F8F8FA;border-radius:10px;margin-bottom:8px;font-size:12px;border:1px solid #EAEAEF;">
           <div>
-            <b>${s.jenisProduk}:</b> ${escapeHtml(s.namaFile || 'Tautan')}
+            <div style="font-weight:700;color:var(--ink);text-transform:capitalize;">${s.jenisProduk.replace('_', ' ')}</div>
+            <div style="color:var(--muted);font-size:11px;">File: ${escapeHtml(s.namaFile || 'Tautan Google Drive')}</div>
           </div>
-          <div style="display:flex;gap:6px;">
-            ${s.urlDrive ? `<a href="${escapeHtml(s.urlDrive)}" target="_blank" rel="noopener" class="btn btn-light" style="padding:4px 8px;font-size:11px;">Buka Video Drive ↗</a>` : ''}
+          <div style="display:flex;gap:6px;align-items:center;">
+            ${s.urlDrive ? `<a href="${escapeHtml(s.urlDrive)}" target="_blank" rel="noopener" class="btn btn-primary" style="padding:5px 10px;font-size:11px;text-decoration:none;">Buka di Drive ↗</a>` : ''}
             <span class="status-tag ${s.status === 'Diperiksa' ? 'done' : 'draft'}">${s.status}</span>
           </div>
         </div>
       `).join('');
     }
 
+    // Ekstrak Jawaban Kelompok
+    const gAnsMap = {};
+    (d.groupAnswers || []).forEach(a => { gAnsMap[a.bagian] = a.payload || {}; });
+    const ansB = gAnsMap.B || {};
+    const ansC = gAnsMap.C || {};
+    const ansD = gAnsMap.D || {};
+    const ansE = gAnsMap.E || {};
+    const ansF = gAnsMap.F || {};
+
+    // Hitung total durasi storyboard C.4
+    let totalSec = 0;
+    for (let i = 1; i <= 6; i++) { totalSec += Number(ansC[`c_duration${i}`]) || 0; }
+
+    // Rangkum Jawaban Individu Bagian A dari masing-masing 6 siswa
+    const indAnswers = d.individualAnswers || [];
+    const indAByStudent = {};
+    const indFByStudent = {};
+    indAnswers.forEach(a => {
+      if (a.bagian === 'A') indAByStudent[a.userId] = a;
+      if (a.bagian === 'F') indFByStudent[a.userId] = a;
+    });
+
+    const membersHtmlA = (d.members || []).map((m, idx) => {
+      const aData = indAByStudent[m.userId] ? indAByStudent[m.userId].payload : null;
+      const isDone = !!(aData && aData.a_q1 && aData.a_q2 && aData.a_q3);
+      return `
+        <div style="background:#FFFFFF;border:1px solid #EAEAEF;border-radius:10px;padding:12px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div>
+              <b style="font-size:13px;">${idx + 1}. ${escapeHtml(m.namaTampilan)}</b>
+              <span style="font-size:11px;color:var(--muted);margin-left:6px;">(Absen: ${escapeHtml((aData && aData.a_absen) || '—')})</span>
+            </div>
+            <span class="status-tag ${isDone ? 'done' : 'draft'}">${isDone ? 'Selesai ✓' : 'Belum Lengkap'}</span>
+          </div>
+          ${aData ? `
+            <div style="font-size:12px;display:grid;gap:6px;background:#F8F8FA;padding:10px;border-radius:8px;">
+              <div><b>Q1 (Konten Favorit):</b> ${escapeHtml(aData.a_q1 || '—')}</div>
+              <div><b>Q2 (Video Edukatif):</b> ${escapeHtml(aData.a_q2 || '—')}</div>
+              <div><b>Q3 (Etika Awal):</b> ${escapeHtml(aData.a_q3 || '—')}</div>
+            </div>
+          ` : `<div style="font-size:11.5px;color:var(--muted);font-style:italic;">Siswa ini belum mengisi Bagian A di aplikasi.</div>`}
+        </div>
+      `;
+    }).join('');
+
+    // Rangkum Penilaian Antarteman Bagian F
+    const membersHtmlF = (d.members || []).map((m, idx) => {
+      const fData = indFByStudent[m.userId] ? indFByStudent[m.userId].payload : null;
+      return `
+        <div style="background:#FFFFFF;border:1px solid #EAEAEF;border-radius:10px;padding:12px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <b>${idx + 1}. Penilai: ${escapeHtml(m.namaTampilan)}</b>
+            <span class="status-tag ${fData ? 'done' : 'draft'}">${fData ? 'Terkirim ✓' : 'Belum Mengisi'}</span>
+          </div>
+          ${fData ? `
+            <div style="font-size:12px;display:grid;gap:6px;background:#F8F8FA;padding:10px;border-radius:8px;">
+              <div><b>Kelompok yang dinilai:</b> ${escapeHtml(fData.f_group || '—')} (Skor: ${escapeHtml(fData.f_score || '—')}/100)</div>
+              <div><b>Kelebihan Karya:</b> ${escapeHtml(fData.f_good || '—')}</div>
+              <div><b>Saran Perbaikan:</b> ${escapeHtml(fData.f_suggest || '—')}</div>
+              <div style="margin-top:6px;padding-top:6px;border-top:1px dashed #DDD;">
+                <b>Skor Rekan Kelompok (Skala 1–4):</b>
+                <div style="margin-top:4px;">• ${escapeHtml(fData.f_peerName0 || 'Teman 1')}: Aktif ${fData.f_peer0_aktif || '—'}, Hormat ${fData.f_peer0_respect || '—'}, TanggungJawab ${fData.f_peer0_duty || '—'}</div>
+                <div>• ${escapeHtml(fData.f_peerName1 || 'Teman 2')}: Aktif ${fData.f_peer1_aktif || '—'}, Hormat ${fData.f_peer1_respect || '—'}, TanggungJawab ${fData.f_peer1_duty || '—'}</div>
+                <div>• ${escapeHtml(fData.f_peerName2 || 'Teman 3')}: Aktif ${fData.f_peer2_aktif || '—'}, Hormat ${fData.f_peer2_respect || '—'}, TanggungJawab ${fData.f_peer2_duty || '—'}</div>
+              </div>
+            </div>
+          ` : `<div style="font-size:11.5px;color:var(--muted);font-style:italic;">Siswa ini belum mengisi Penilaian Antarteman di aplikasi.</div>`}
+        </div>
+      `;
+    }).join('');
+
+    // HTML TABBED MODAL
     $('modalGradeContent').innerHTML = `
-      <div style="margin-bottom:16px;">
-        <h4 style="margin:0 0 6px;font-size:13px;">Daftar Anggota Kelompok</h4>
-        <div style="font-size:12px;color:#444;">
-          ${(d.members || []).map(m => `• ${escapeHtml(m.namaTampilan)}`).join(' &nbsp; ')}
-        </div>
+      <!-- TAB NAVIGATION -->
+      <div style="display:flex;gap:6px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px;overflow-x:auto;">
+        <button class="btn btn-primary" id="inspTabBtn-video" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('video')">🎬 Video & Berkas</button>
+        <button class="btn btn-light" id="inspTabBtn-group" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('group')">👥 Jawaban Kelompok (B–E)</button>
+        <button class="btn btn-light" id="inspTabBtn-indiv" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('indiv')">👤 Tugas Individu Bag. A (6 Siswa)</button>
+        <button class="btn btn-light" id="inspTabBtn-peer" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('peer')">🤝 Penilaian Antarteman (F)</button>
+        <button class="btn btn-dark" id="inspTabBtn-grade" style="padding:6px 12px;font-size:12px;" onclick="switchInspectorTab('grade')">📝 Beri Nilai Guru</button>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <h4 style="margin:0 0 6px;font-size:13px;">Produk Video & Berkas Terkumpul</h4>
+      <!-- PANE 1: VIDEO & BERKAS FINAL -->
+      <div id="inspPane-video">
+        <h4 style="margin:0 0 8px;font-size:13.5px;">Karya Video Final & Tautan Google Drive</h4>
         ${subsHtml}
+        <div style="margin-top:14px;background:#F8F8FA;padding:12px;border-radius:10px;font-size:12px;">
+          <div><b>Caption Video:</b> ${escapeHtml(ansE.e_caption || '—')}</div>
+          <div style="margin-top:4px;"><b>Hashtag (3–5):</b> <span style="color:var(--cyan);font-weight:700;">${escapeHtml(ansE.e_hashtags || '—')}</span></div>
+          <div style="margin-top:4px;"><b>Cover Video:</b> ${escapeHtml(ansE.e_cover || '—')}</div>
+        </div>
       </div>
 
-      <div class="form-card" style="margin-bottom:0;">
-        <h3 style="font-size:13.5px;">Beri Nilai LKPD & Umpan Balik Guru</h3>
-        <p class="sub">Nilai dan catatan akan disimpan langsung ke sheet PenilaianGuru di Google Sheets.</p>
-        <div class="field-grid">
-          <div class="field">
-            <label for="gradeScoreInput">Nilai LKPD (0–100)</label>
-            <input type="number" id="gradeScoreInput" min="0" max="100" value="${escapeHtml(currentGrade)}" placeholder="Contoh: 88">
+      <!-- PANE 2: JAWABAN KELOMPOK (B, C, D, E) -->
+      <div id="inspPane-group" style="display:none;font-size:12.5px;">
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;">
+          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian B — Konsep & Etika Konten</h4>
+          <div><b>Judul/Topik:</b> ${escapeHtml(ansB.b_title || '—')}</div>
+          <div><b>Hook 3 Detik:</b> ${escapeHtml(ansB.b_hook || '—')}</div>
+          <div><b>Pesan Kunci:</b> ${escapeHtml(ansB.b_message || '—')}</div>
+          <div><b>Call to Action (CTA):</b> ${escapeHtml(ansB.b_cta || '—')}</div>
+        </div>
+
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <h4 style="margin:0;color:var(--ink);">Bagian C — Naskah & Storyboard (30–60 Detik)</h4>
+            <span class="status-tag ${(totalSec >= 30 && totalSec <= 60) ? 'done' : 'draft'}">Total Durasi: ${totalSec} Detik</span>
           </div>
-          <div class="field full">
-            <label for="gradeNoteInput">Catatan / Umpan Balik Guru</label>
-            <textarea id="gradeNoteInput" placeholder="Apresiasi karya dan catatan perbaikan...">${escapeHtml(currentNote)}</textarea>
+          <div><b>Skrip Hook:</b> ${escapeHtml(ansC.c_scriptHook || '—')}</div>
+          <div><b>Skrip Isi:</b> ${escapeHtml(ansC.c_scriptBody || '—')}</div>
+          <div><b>Skrip CTA:</b> ${escapeHtml(ansC.c_scriptCTA || '—')}</div>
+
+          <div style="margin-top:8px;overflow-x:auto;">
+            <table class="data-table" style="font-size:11.5px;background:#FFF;">
+              <thead>
+                <tr><th>Adegan</th><th>Visual (9:16)</th><th>Dialog / Teks</th><th>Audio / SFX</th><th>Durasi</th></tr>
+              </thead>
+              <tbody>
+                ${[1, 2, 3, 4, 5, 6].map(i => `
+                  <tr>
+                    <td><b>Adegan ${i}</b></td>
+                    <td>${escapeHtml(ansC[`c_visual${i}`] || '—')}</td>
+                    <td>${escapeHtml(ansC[`c_dialog${i}`] || '—')}</td>
+                    <td>${escapeHtml(ansC[`c_audio${i}`] || '—')}</td>
+                    <td><b>${ansC[`c_duration${i}`] || 0}s</b></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
           </div>
         </div>
-        <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px;">
-          <button class="btn btn-light" onclick="closeGradeModal()">Tutup</button>
-          <button class="btn btn-primary" onclick="saveGradeFromModal('${groupId}')">💾 Simpan Nilai ke Sheets</button>
+
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;">
+          <h4 style="margin:0 0 6px;color:var(--ink);">Bagian D — Logbook & Pembagian Tugas</h4>
+          <div><b>Kendala:</b> ${escapeHtml(ansD.d_problem || 'Tidak ada')}</div>
+          <div><b>Solusi:</b> ${escapeHtml(ansD.d_solution || '—')}</div>
+        </div>
+      </div>
+
+      <!-- PANE 3: TUGAS INDIVIDU BAGIAN A (6 SISWA) -->
+      <div id="inspPane-indiv" style="display:none;">
+        <div style="margin-bottom:10px;font-size:12px;color:var(--muted);">
+          Setiap siswa wajib menjawab 3 pertanyaan pemantik & etika awal ini secara mandiri.
+        </div>
+        ${membersHtmlA}
+      </div>
+
+      <!-- PANE 4: PENILAIAN ANTARTEMAN BAGIAN F -->
+      <div id="inspPane-peer" style="display:none;">
+        <div style="margin-bottom:10px;font-size:12px;color:var(--muted);">
+          Refleksi kelompok dan penilaian rekan sejawat antarsiswa di dalam kelompok.
+        </div>
+        <div style="background:#F8F8FA;padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;">
+          <h4 style="margin:0 0 6px;">Refleksi Kelompok:</h4>
+          <div><b>Hal yang paling menantang:</b> ${escapeHtml(ansF.f_group1 || '—')}</div>
+          <div><b>Solusi kerjasama:</b> ${escapeHtml(ansF.f_group2 || '—')}</div>
+          <div><b>Pelajaran untuk proyek berikutnya:</b> ${escapeHtml(ansF.f_group3 || '—')}</div>
+        </div>
+        ${membersHtmlF}
+      </div>
+
+      <!-- PANE 5: FORM PENILAIAN GURU -->
+      <div id="inspPane-grade" style="display:none;">
+        <div class="form-card" style="margin-bottom:0;background:#FFF;border:1px solid #EAEAEF;">
+          <h3 style="font-size:14px;">Beri Nilai LKPD & Umpan Balik Guru</h3>
+          <p class="sub">Nilai dan catatan akan disimpan langsung ke sheet PenilaianGuru di Google Sheets secara real-time.</p>
+          <div class="field-grid">
+            <div class="field">
+              <label for="gradeScoreInput">Nilai LKPD (Skala 0–100) *</label>
+              <input type="number" id="gradeScoreInput" min="0" max="100" value="${escapeHtml(currentGrade)}" placeholder="Contoh: 88">
+            </div>
+            <div class="field full">
+              <label for="gradeNoteInput">Catatan / Umpan Balik Evaluasi Guru *</label>
+              <textarea id="gradeNoteInput" placeholder="Berikan apresiasi kreativitas video dan catatan konstruktif...">${escapeHtml(currentNote)}</textarea>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px;">
+            <button class="btn btn-light" onclick="closeGradeModal()">Tutup</button>
+            <button class="btn btn-primary" onclick="saveGradeFromModal('${groupId}')">💾 Simpan Nilai ke Sheets</button>
+          </div>
         </div>
       </div>
     `;
   } else {
     $('modalGradeContent').innerHTML = `<p style="color:var(--pink);">${res.message}</p>`;
   }
+}
+
+function switchInspectorTab(tabId) {
+  const tabs = ['video', 'group', 'indiv', 'peer', 'grade'];
+  tabs.forEach(t => {
+    const btn = $(`inspTabBtn-${t}`);
+    const pane = $(`inspPane-${t}`);
+    if (btn) btn.className = (t === tabId) ? (t === 'grade' ? 'btn btn-dark' : 'btn btn-primary') : 'btn btn-light';
+    if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
+  });
 }
 
 function closeGradeModal() {
@@ -2163,13 +2370,39 @@ async function saveGradeFromModal(groupId) {
   }
 }
 
+async function handleInit6Groups() {
+  const conf = await Swal.fire({
+    icon: 'question',
+    title: 'Inisialisasi 6 Kelompok & 36 Siswa?',
+    html: 'Sistem akan menyiapkan <b>6 Kelompok</b> dan <b>36 Siswa (masing-masing 6 siswa)</b> di Google Sheets secara otomatis.<br><br><small style="color:#A0A0B0;">Nama siswa di sheet Pengguna dapat disesuaikan dengan daftar absensi kelas kapan saja.</small>',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Inisialisasi Database',
+    cancelButtonText: 'Batal',
+    background: '#161823',
+    color: '#FFF',
+    confirmButtonColor: '#25F4EE',
+    cancelButtonColor: '#43434A'
+  });
+  if (!conf.isConfirmed) return;
+
+  toastLive('Menyiapkan 6 kelompok & 36 siswa di Sheets...');
+  const res = await apiCall('init6Kelompok36Siswa');
+  if (res.status === 'success') {
+    showSuccessModal('Inisialisasi Berhasil', res.data.message || '6 Kelompok dan 36 Siswa siap di Google Sheets.');
+    await loadInitialPublicData();
+    loadTeacherDashboard();
+  } else {
+    showErrorModal('Gagal Menyiapkan', res.message);
+  }
+}
+
 async function promptNewGroup() {
   const { value: formValues } = await Swal.fire({
     title: 'Tambah Kelompok Baru',
     html: `
       <div style="text-align:left;display:grid;gap:10px;">
         <label style="font-size:12px;font-weight:700;">Nama Kelompok *</label>
-        <input id="swalGroupInput" class="swal2-input" placeholder="Contoh: Kelompok 3 (Kreatif)" style="margin:0;width:100%;">
+        <input id="swalGroupInput" class="swal2-input" placeholder="Contoh: Kelompok 7 (Kreatif)" style="margin:0;width:100%;">
         <label style="font-size:12px;font-weight:700;margin-top:6px;">Kelas</label>
         <input id="swalClassInput" class="swal2-input" value="X-1" style="margin:0;width:100%;">
       </div>
@@ -2209,16 +2442,20 @@ function exportTeacherCsv() {
   }
 
   const csvRows = [
-    ['Nama Kelompok', 'Kelas', 'Jumlah Anggota', 'Progres (%)', 'Status Pengumpulan', 'Nilai LKPD', 'Catatan Guru']
+    ['Nama Kelompok', 'Kelas', 'Jumlah Anggota', 'Daftar Siswa', 'Tugas Kelompok (B-E)', 'Bagian A Selesai (Siswa)', 'Bagian F Selesai (Siswa)', 'Status Video', 'Nilai LKPD', 'Catatan Guru']
   ];
 
   teacherDashboardData.rows.forEach(r => {
+    const memberNames = (r.members || []).map(m => m.nama).join('; ');
     csvRows.push([
       `"${r.namaKelompok}"`,
       `"${r.kelas}"`,
       r.jumlahAnggota,
-      r.progress,
-      `"${r.status === 'sent' ? 'Terkumpul' : 'Dalam Pengerjaan'}"`,
+      `"${memberNames}"`,
+      `${r.bagianKelompokSelesai || 0}/4 Bagian`,
+      `${r.anggotaSelesaiA || 0}/${r.jumlahAnggota || 6}`,
+      `${r.anggotaSelesaiF || 0}/${r.jumlahAnggota || 6}`,
+      `"${r.hasVideo ? 'Terkumpul (' + r.videoUrl + ')' : 'Belum Dikumpulkan'}"`,
       r.nilaiLKPD !== '' ? r.nilaiLKPD : '',
       `"${(r.catatanGuru || '').replace(/"/g, '""')}"`
     ]);
@@ -2228,7 +2465,7 @@ function exportTeacherCsv() {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement('a');
   link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `rekap-lkpd-tiktok-${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute('download', `rekap-lkpd-tiktok-6kelompok-${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
