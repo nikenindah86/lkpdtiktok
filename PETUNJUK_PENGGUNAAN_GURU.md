@@ -21,23 +21,39 @@ Panduan praktis bagi guru pengampu kokurikuler dalam mengelola pembelajaran, mem
 
 ---
 
-## 2. Persiapan Awal Database (Dilakukan 1 Kali)
+## 2. Persiapan Awal Database & Daftar 36 Siswa (Dilakukan 1 Kali)
 
-Sebelum sesi kokurikuler dimulai di kelas, pastikan database Google Sheets telah terisi struktur 6 kelompok dan 36 siswa:
+Sebelum sesi kokurikuler dimulai di kelas, database perlu diinisialisasi untuk 6 kelompok dan 36 siswa. **Guru TIDAK PERLU mengetik nama siswa satu per satu!**
 
-### Opsi A (Langsung dari Web App - Paling Mudah):
-1. Masuk ke **Dashboard Guru** di web app.
-2. Klik tombol warna biru **⚡ Inisialisasi 6 Kelompok (36 Siswa)**.
-3. Konfirmasi "Ya, Inisialisasi". Sistem otomatis membuat 6 kelompok (`Kelompok 1` s.d. `Kelompok 6`) dan mendaftarkan 36 akun siswa (6 siswa per kelompok).
+### Langkah 1: Buat Struktur 6 Kelompok (1 Kali Klik)
+Pilih salah satu cara berikut:
+- **Dari Web App (Paling Cepat):** Masuk ke **Dashboard Guru** > klik tombol **⚡ Inisialisasi 6 Kelompok (36 Siswa)** > konfirmasi "Ya, Inisialisasi".
+- **Dari Google Sheets:** Buka spreadsheet > tunggu menu kustom **LKPD TikTok** muncul di atas > klik **LKPD TikTok > ⚡ Inisialisasi 6 Kelompok (36 Siswa)**.
 
-### Opsi B (Dari Google Sheets Langsung):
-1. Buka spreadsheet Google Sheets Anda.
-2. Tunggu 2 detik hingga menu kustom **LKPD TikTok** muncul di menu bar atas.
-3. Klik **LKPD TikTok > ⚡ Inisialisasi 6 Kelompok (36 Siswa)**.
-4. Notifikasi konfirmasi berhasil akan muncul di pojok kanan bawah.
+Sistem akan otomatis membuat 6 kelompok (`Kelompok 1` s.d. `Kelompok 6`) dengan kapasitas masing-masing 6 siswa (total 36 siswa).
 
-> **Tips Kustomisasi Nama Siswa:**
-> Buka tab sheet **Pengguna** di Google Sheets. Anda dapat langsung mengedit nama siswa pada kolom `nama` sesuai nama asli absensi kelas tanpa mengubah kolom `userId`.
+---
+
+### Langkah 2: Cara Mengisi / Memasukkan Nama 36 Siswa
+
+Guru memiliki **3 Pilihan Sangat Praktis** sesuai preferensi:
+
+#### Pilihan A: Biarkan Siswa Menuliskan Namanya Sendiri (Paling Santai bagi Guru)
+- Guru **tidak perlu input nama apa pun** sebelum kelas dimulai. Cukup bagikan link web app kepada siswa.
+- Saat siswa membuka web di HP masing-masing dan memilih kelompoknya (misal: `Kelompok 1`), siswa cukup memilih opsi **"+ Tulis Nama Baru"**.
+- Siswa mengetik nama lengkapnya sendiri, lalu klik **Masuk & Mulai LKPD**.
+- Nama tersebut akan otomatis tersimpan ke database Google Sheets dan langsung terdaftar resmi di kelompok tersebut.
+
+#### Pilihan B: Copy-Paste Massal 36 Nama Sekaligus di Google Sheets (Hanya 10 Detik)
+Jika guru sudah memiliki daftar absensi kelas di file Excel atau Word:
+1. Buka spreadsheet Google Sheets Anda, lalu klik tab sheet **Pengguna**.
+2. Di file Excel absensi Anda, **Copy** seluruh daftar 36 nama siswa (1 kolom ke bawah).
+3. Di Google Sheets, letakkan kursor pada kolom **nama** di baris siswa pertama (sel `C3`), lalu tekan **Paste (Ctrl + V)**.
+4. Selesai! Seluruh 36 nama siswa langsung terisi rapi dalam 10 detik tanpa perlu mengetik ulang satu per satu.
+
+#### Pilihan C: Gunakan Nama Bawaan Sistem Terlebih Dahulu (Untuk Simulasi / Uji Coba)
+- Saat tombol **⚡ Inisialisasi 6 Kelompok (36 Siswa)** diklik, sistem sudah otomatis menyertakan 36 nama siswa contoh yang terbagi rata (6 siswa per kelompok).
+- Guru dapat langsung menguji coba seluruh alur pengisian dan penilaian tanpa perlu menyiapkan data apa pun.
 
 ---
 
