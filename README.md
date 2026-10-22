@@ -12,14 +12,18 @@ Aplikasi web interaktif untuk LKPD kokurikuler pembuatan video edukatif TikTok (
 | `index.html` | Frontend modern, responsif mobile, terhubung real-time ke Google Sheets & SweetAlert2. |
 | `Code.gs` | Backend Google Apps Script dengan fungsi `setupDatabase()`, validasi LKPD A–F, dan REST API. |
 | `config.js` | Pengaturan endpoint API frontend untuk Cloudflare Pages / Apps Script. |
-| `worker.js` | Script Cloudflare Worker sebagai reverse proxy CORS penghubung Cloudflare Pages ke Apps Script. |
+| `_worker.js` | Cloudflare Pages Worker (Advanced Mode) sebagai reverse proxy CORS otomatis `/api` ke Apps Script. |
 | `LKPD_Konten_TikTok_Kelas_X.docx` | Dokumen sumber LKPD cetak kurikulum Fase E. |
-| `MODUL_KOKURIKULER_KONTEN_TIKTOK.docx` | Modul ajar kokurikuler guru pembimbing. |
+| `MODUL_KOKURIKULER_KONTEN_TIKTOK.docx` | Dokumen sumber Modul Kokurikuler guru. |
+| `MODUL_KOKURIKULER_KONTEN_TIKTOK.md` | Materi modul digital yang terintegrasi langsung di dalam web app sebagai prasyarat pengerjaan. |
 | `PRD_Planning.md` | Product Requirements Document (PRD) dan spesifikasi teknis sistem. |
 
 ---
 
-## 🚀 Panduan Deployment & Konfigurasi
+## 🚀 Panduan Deployment Cloudflare Pages (Arsitektur `_worker.js`)
+
+> **Keunggulan Metode Ini (seperti pada proyek santoso):**
+> Anda **TIDAK PERLU** membuat Cloudflare Worker secara terpisah! Cukup hubungkan repositori ini ke **Cloudflare Pages**, file `_worker.js` otomatis bertindak sebagai edge proxy `/api` yang mengatasi CORS preflight dan redirect Google Apps Script secara instan.
 
 ### 1. Setup Backend Google Sheets (`Code.gs`)
 1. Buka [Google Sheets](https://sheets.new) baru di browser Anda.
@@ -37,48 +41,22 @@ Aplikasi web interaktif untuk LKPD kokurikuler pembuatan video edukatif TikTok (
 
 ---
 
-### 2. Setup Cloudflare Worker (`worker.js`)
-*Cloudflare Worker berfungsi sebagai reverse proxy dan CORS gateway agar pemanggilan API dari Cloudflare Pages berjalan lancar tanpa terhalang CORS preflight.*
-
-1. Buka [Cloudflare Dashboard](https://dash.cloudflare.com/) > menu **Workers & Pages**.
-2. Klik **Create application** > pilih **Create Worker**.
-3. Beri nama worker (misal: `lkpdtiktok-api`) > klik **Deploy**.
-4. Klik **Edit code**, hapus kode bawaan, lalu tempel seluruh isi file `worker.js`.
-5. Klik **Deploy**.
-6. Masuk ke tab **Settings** pada Worker tersebut > pilih **Variables and Secrets**:
-   - Klik **Add**:
-     - Variable name: `GAS_URL`
-     - Value: Tempelkan Web app URL Apps Script (`/exec`) dari langkah 1 tadi.
-   - Klik **Save**.
-7. Salin URL Worker Anda (contoh: `https://lkpdtiktok-api.namakamu.workers.dev`).
-
----
-
-### 3. Setup Konfigurasi Frontend (`config.js`)
-1. Buka file `config.js` di repositori ini.
-2. Perbarui baris `API_URL` dengan URL Cloudflare Worker Anda:
-   ```javascript
-   const CONFIG = {
-     API_URL: "https://lkpdtiktok-api.namakamu.workers.dev",
-     ...
-   };
-   ```
-
----
-
-### 4. Deploy ke Cloudflare Pages
-1. Push repositori ini ke GitHub:
-   ```bash
-   git add .
-   git commit -m "feat: setup LKPD TikTok app with live Google Sheets backend"
-   git push origin main
-   ```
-2. Buka [Cloudflare Dashboard](https://dash.cloudflare.com/) > **Workers & Pages** > **Create application** > **Pages**.
-3. Pilih **Connect to Git** dan hubungkan repositori `lkpdtiktok`.
-4. Pada Build settings:
-   - Framework preset: **None** (HTML/JS statis).
-   - Build output directory: `/` (root repositori).
-5. Klik **Save and Deploy**. Web app LKPD Digital siap diakses oleh siswa dan guru secara global!
+### 2. Deploy ke Cloudflare Pages
+1. Pastikan repo sudah di-push ke GitHub: `https://github.com/nikenindah86/lkpdtiktok.git`.
+2. Buka [Cloudflare Dashboard](https://dash.cloudflare.com/) > **Workers & Pages** > klik **Create application** > tab **Pages** > **Connect to Git**.
+3. Pilih repositori `lkpdtiktok`.
+4. Pada form konfigurasi build:
+   - **Project name**: `lkpdtiktok`
+   - **Production branch**: `main`
+   - **Framework preset**: `None`
+   - **Build command**: *(kosongkan)*
+   - **Build output directory**: `/`
+5. Buka bagian **`> Environment variables (advanced)`**:
+   - Klik **Add variable**:
+     - **Variable name**: `GAS_URL`
+     - **Value**: Tempelkan Web app URL Apps Script (`https://script.google.com/macros/s/.../exec`) dari langkah 1.
+6. Klik **Save and Deploy**.
+7. Selesai! Web app LKPD Digital siap diakses melalui URL `https://lkpdtiktok.pages.dev`. File `_worker.js` akan otomatis mem-proxy semua request `/api` ke Google Apps Script tanpa hambatan CORS.
 
 ---
 

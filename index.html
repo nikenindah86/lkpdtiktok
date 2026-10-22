@@ -1071,9 +1071,9 @@ async function apiCall(action, payload = {}) {
     });
   }
 
-  const apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '';
-  if (!apiUrl || apiUrl.includes('YOUR_DEPLOYMENT_ID') || apiUrl.includes('namakamu')) {
-    console.warn('API_URL belum dikonfigurasi di config.js.');
+  let apiUrl = (window.APP_CONFIG && window.APP_CONFIG.API_URL) ? window.APP_CONFIG.API_URL : '/api';
+  if (apiUrl === '/api' || apiUrl.startsWith('/api')) {
+    apiUrl = `/api?action=${encodeURIComponent(action)}`;
   }
 
   try {

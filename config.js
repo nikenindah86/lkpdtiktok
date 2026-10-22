@@ -1,42 +1,34 @@
 /**
- * KONFIGURASI APLIKASI LKPD DIGITAL TIKTOK
- * ========================================================
- * File ini mengatur endpoint API backend dan pengaturan aplikasi.
- * 
- * PANDUAN PENGISIAN API_URL:
- * 1. Jika menggunakan Cloudflare Worker (Disarankan):
- *    Isi dengan URL Cloudflare Worker kamu, contoh:
- *    API_URL: "https://lkpdtiktok-api.namakamu.workers.dev"
- * 
- * 2. Jika menghubungkan langsung ke Google Apps Script Web App:
- *    Isi dengan URL Deployment Web App Apps Script (berakhiran /exec), contoh:
- *    API_URL: "https://script.google.com/macros/s/AKfycby.../exec"
- * 
- * 3. Jika dijalankan di dalam Google Apps Script (HTML Service):
- *    Aplikasi otomatis mendeteksi google.script.run tanpa memerlukan API_URL eksternal.
+ * =========================================================================
+ * KONFIGURASI GLOBAL FRONTEND — LKPD TIKTOK SMAN 1 BANCAR
+ * =========================================================================
+ * File: config.js
+ * Diadaptasi dari pola Cloudflare Pages: santoso / aidukasi.net
+ * =========================================================================
  */
 
 const CONFIG = {
-  // Ganti URL di bawah dengan URL Cloudflare Worker kamu atau URL Apps Script Exec
-  API_URL: "https://lkpdtiktok-api.namakamu.workers.dev",
+  // Bila di-deploy di Cloudflare Pages (lkpdtiktok.pages.dev), gunakan '/api' (diteruskan via _worker.js)
+  // Bila dibuka secara lokal (file://), gunakan URL langsung Google Apps Script Web App
+  API_URL: (typeof window !== 'undefined' && window.location && window.location.protocol === 'file:')
+    ? 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
+    : '/api',
 
   // Informasi Sekolah dan Mata Pelajaran
   APP_TITLE: "LKPD Digital | Membuat Konten TikTok",
   SCHOOL_NAME: "SMA Negeri 1 Bancar",
   CLASS_NAME: "Kelas X Fase E",
-  SEMESTER: "Ganjil / Genap",
 
-  // Konfigurasi Penyimpanan Otomatis (Debounce autosave draf dalam milidetik)
+  // Konfigurasi Autosave (milidetik)
   AUTOSAVE_DELAY_MS: 1500,
 
-  // Default fallback PIN Pengajar (bisa disesuaikan di sheet Konfigurasi)
+  // Default fallback PIN Pengajar
   DEFAULT_TEACHER_PIN: "123456",
 
   // Durasi animasi notifikasi Toast (milidetik)
   TOAST_DURATION_MS: 3000
 };
 
-// Ekspor ke window agar dapat diakses oleh index.html
 if (typeof window !== "undefined") {
   window.APP_CONFIG = CONFIG;
 }
