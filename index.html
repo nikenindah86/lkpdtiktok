@@ -53,24 +53,33 @@
     .app { min-height: 100vh; display: flex; flex-direction: column; }
     
     /* TOPBAR */
+    /* TOPBAR */
     .topbar {
-      height: 68px;
+      height: 64px;
       background: var(--black);
       color: var(--white);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 clamp(16px, 3vw, 36px);
+      padding: 0 clamp(12px, 3vw, 32px);
       position: sticky;
       top: 0;
       z-index: 40;
       border-bottom: 1px solid #262629;
+      box-sizing: border-box;
+      gap: 10px;
     }
-    .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+      flex-shrink: 1;
+    }
     .brand-mark {
-      width: 36px; height: 36px;
+      width: 34px; height: 34px;
       background: var(--white);
-      border-radius: 10px;
+      border-radius: 9px;
       display: grid;
       place-items: center;
       position: relative;
@@ -79,35 +88,75 @@
     }
     .brand-mark:before, .brand-mark:after {
       content: ""; position: absolute;
-      width: 12px; height: 21px;
-      border: 3.5px solid; border-radius: 8px;
+      width: 11px; height: 19px;
+      border: 3px solid; border-radius: 7px;
       transform: rotate(10deg); z-index: -1;
     }
     .brand-mark:before { border-color: var(--cyan); left: 7px; top: 5px; }
-    .brand-mark:after { border-color: var(--pink); left: 15px; top: 8px; }
-    .brand-mark span { width: 5px; height: 5px; background: var(--black); border-radius: 50%; margin-top: 12px; margin-left: 3px; }
-    .brand-name { font-weight: 800; font-size: 16px; letter-spacing: -0.03em; line-height: 1.1; }
-    .brand-sub { font-size: 11px; color: #9A9BA6; margin-top: 2px; }
+    .brand-mark:after { border-color: var(--pink); left: 14px; top: 7px; }
+    .brand-mark span { width: 5px; height: 5px; background: var(--black); border-radius: 50%; margin-top: 10px; margin-left: 3px; }
     
-    .top-actions { display: flex; align-items: center; gap: 10px; }
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 700;
-      color: #0E8345; background: #E6F7EE;
-      border: 1px solid #B6EBD0;
-      border-radius: 20px; padding: 4px 10px;
+    .brand-text { min-width: 0; overflow: hidden; }
+    .brand-name {
+      font-weight: 800; font-size: 15px; letter-spacing: -0.02em; line-height: 1.15;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E8345; animation: pulse 2s infinite; }
+    .brand-sub {
+      font-size: 11px; color: #9A9BA6; margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #0E8345;
+      background: #E6F7EE;
+      border: 1px solid #B6EBD0;
+      border-radius: 20px;
+      padding: 4px 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #0E8345; animation: pulse 2s infinite; flex-shrink: 0; }
     @keyframes pulse { 0%{opacity:1;} 50%{opacity:.3;} 100%{opacity:1;} }
     
     .btn-account {
-      display: flex; align-items: center; gap: 8px;
-      background: #1C1C20; color: #FFF;
-      border: 1px solid #333338; border-radius: 12px;
-      padding: 6px 12px; font-size: 12px; font-weight: 700;
-      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1C1C20;
+      color: #FFF;
+      border: 1px solid #333338;
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      max-width: 170px;
     }
-    .btn-account:hover { background: #27272C; }
+    .btn-account:hover { background: #27272C; border-color: #555; }
+    .avatar-mini {
+      width: 20px; height: 20px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--cyan), #9FFCF9);
+      color: #000; font-size: 10px; font-weight: 800;
+      display: grid; place-items: center; flex: none;
+    }
+    .account-label {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .arrow-down { font-size: 10px; opacity: 0.6; }
 
     /* LAYOUT */
     .layout {
@@ -399,9 +448,149 @@
       .layout { grid-template-columns: 1fr; }
       .sidebar { display: none; }
       .bottom-nav { display: grid; }
-      main { padding-bottom: 74px; }
+      main { padding-bottom: 85px !important; }
       .content-grid { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
+      .table-tools input { min-width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        height: 56px;
+        padding: 0 10px;
+        gap: 6px;
+      }
+      .brand {
+        gap: 8px;
+        max-width: calc(100% - 170px);
+      }
+      .brand-mark {
+        width: 30px; height: 30px;
+      }
+      .brand-mark:before, .brand-mark:after {
+        width: 9px; height: 16px;
+      }
+      .brand-name {
+        font-size: 13px;
+        letter-spacing: -0.02em;
+      }
+      .brand-sub {
+        display: none !important;
+      }
+      .top-actions {
+        gap: 6px;
+      }
+      .live-badge {
+        padding: 3px 7px;
+        font-size: 10px;
+        gap: 4px;
+      }
+      .btn-account {
+        padding: 4px 8px;
+        font-size: 11px;
+        gap: 5px;
+        max-width: 125px;
+      }
+      .account-label {
+        max-width: 68px;
+      }
+      
+      /* Main Content on Mobile */
+      main {
+        padding: 12px 10px 85px 10px !important;
+      }
+      
+      /* Hero Banner */
+      .hero {
+        padding: 16px 14px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+      }
+      .hero:before {
+        right: -80px; top: -80px;
+        width: 160px; height: 160px;
+        opacity: 0.25;
+      }
+      .hero:after {
+        right: -20px; top: 30px;
+        width: 60px; height: 60px;
+        opacity: 0.25;
+      }
+      .hero h2 {
+        font-size: 19px;
+        line-height: 1.25;
+      }
+      .hero p {
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+      .hero-actions .btn {
+        width: 100%;
+      }
+      
+      /* Stat Cards */
+      .stat-card {
+        padding: 12px;
+      }
+      .stat-value {
+        font-size: 20px;
+      }
+      
+      /* Forms & Sections */
+      .form-card {
+        padding: 14px 12px;
+        border-radius: 12px;
+      }
+      .field-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+      }
+      .form-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .form-actions .btn {
+        width: 100%;
+      }
+      
+      /* Teacher Dashboard */
+      .teacher-stat-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+      .teacher-stat {
+        padding: 10px !important;
+      }
+      .teacher-stat strong {
+        font-size: 20px !important;
+      }
+      .table-tools {
+        gap: 8px;
+      }
+      .table-tools input, .table-tools select, .table-tools button {
+        width: 100% !important;
+        flex: none !important;
+      }
+      
+      /* Modals */
+      .modal-card {
+        padding: 16px 12px !important;
+        border-radius: 16px !important;
+        max-height: 92vh !important;
+      }
+      .modal-head h2 {
+        font-size: 16px !important;
+      }
+      
+      /* Floating Toast Notification */
+      .toast-live {
+        bottom: 70px;
+        right: 12px;
+        left: 12px;
+        padding: 8px 12px;
+        font-size: 11px;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -411,17 +600,19 @@
   <header class="topbar">
     <div class="brand">
       <div class="brand-mark"><span></span></div>
-      <div>
+      <div class="brand-text">
         <div class="brand-name">LKPD Digital • TikTok</div>
         <div class="brand-sub">SMA Negeri 1 Bancar · Fase E</div>
       </div>
     </div>
     <div class="top-actions">
       <div class="live-badge" id="liveBadge" title="Terhubung Real-Time ke Google Sheets">
-        <span class="live-dot"></span> <span id="syncText">Google Sheets Live</span>
+        <span class="live-dot"></span> <span id="syncText">Sheets Live</span>
       </div>
-      <button class="btn-account" id="userMenuBtn" type="button">
-        <span id="topUserRole">Siswa</span>: <strong id="topUserName">Pilih Akun</strong> ▾
+      <button class="btn-account" id="userMenuBtn" type="button" title="Ganti Akun / Masuk Guru">
+        <span class="avatar-mini" id="topAvatarMini">?</span>
+        <span class="account-label"><span id="topUserRole">Tamu</span>: <strong id="topUserName">Masuk</strong></span>
+        <span class="arrow-down">▾</span>
       </button>
     </div>
   </header>
@@ -1167,16 +1358,19 @@ async function initApp() {
 }
 
 function updateUserUI() {
+  const topMini = $('topAvatarMini');
   if (currentUser) {
     $('topUserRole').textContent = currentUser.role === 'guru' ? 'Guru' : 'Siswa';
     $('topUserName').textContent = currentUser.nama || 'Pengguna';
+    if (topMini) topMini.textContent = (currentUser.nama || 'X').charAt(0).toUpperCase();
     $('sideName').textContent = currentUser.nama || 'Pengguna';
     $('sideSub').textContent = currentUser.role === 'guru' ? 'Pengajar • SMA N 1 Bancar' : (currentUser.namaKelompok || 'Kelompok Aktif');
     $('sideAvatar').textContent = (currentUser.nama || 'X').charAt(0).toUpperCase();
     $('homeGroupValue').textContent = currentUser.namaKelompok || (currentUser.role === 'guru' ? 'Mode Guru' : 'Belum Bergabung');
   } else {
     $('topUserRole').textContent = 'Tamu';
-    $('topUserName').textContent = 'Klik untuk Masuk';
+    $('topUserName').textContent = 'Masuk';
+    if (topMini) topMini.textContent = '?';
     $('sideName').textContent = 'Belum Masuk';
     $('sideSub').textContent = 'Klik untuk pilih identitas';
     $('sideAvatar').textContent = '?';
@@ -1186,14 +1380,14 @@ function updateUserUI() {
 }
 
 async function loadInitialPublicData() {
-  $('syncText').textContent = 'Menghubungkan...';
+  $('syncText').textContent = 'Koneksi...';
   const res = await apiCall('getInitialData');
   if (res.status === 'success' && res.data) {
     initialDataCache = res.data;
-    $('syncText').textContent = 'Google Sheets Live';
+    $('syncText').textContent = 'Live ✓';
     populateLoginDropdowns(res.data);
   } else {
-    $('syncText').textContent = 'Offline / Menunggu Setup';
+    $('syncText').textContent = 'Offline';
   }
 }
 

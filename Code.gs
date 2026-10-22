@@ -91,6 +91,47 @@ const FIELD_ALLOWLIST = Object.freeze({
   }
 });
 
+// === GOOGLE WORKSPACE MENU SETUP (SESUAI ATURAN .AGENTS) ===
+/**
+ * Setup menu kustom di Google Sheets saat dokumen dibuka oleh Pengajar.
+ */
+function onOpen() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('LKPD TikTok')
+      .addItem('⚡ Inisialisasi 6 Kelompok (36 Siswa)', 'menuInit6Kelompok36Siswa')
+      .addItem('⚙ Setup & Verifikasi Database', 'menuSetupDatabase')
+      .addSeparator()
+      .addItem('ℹ Informasi Versi', 'menuShowInfo')
+      .addToUi();
+  } catch (ignored) {}
+}
+
+function menuInit6Kelompok36Siswa() {
+  const res = init6Kelompok36Siswa({ forceReset: false });
+  SpreadsheetApp.getActiveSpreadsheet().toast(
+    res.data ? res.data.message : res.message,
+    'LKPD TikTok',
+    6
+  );
+}
+
+function menuSetupDatabase() {
+  const res = setupDatabase();
+  SpreadsheetApp.getActiveSpreadsheet().toast(res.message, 'LKPD TikTok', 6);
+}
+
+function menuShowInfo() {
+  const ui = SpreadsheetApp.getUi();
+  ui.alert(
+    'LKPD Digital TikTok - SMAN 1 Bancar',
+    'Versi Backend: 2.0.0 (Fase E)\n' +
+    'Dukungan: 6 Kelompok x 6 Siswa (36 Siswa)\n' +
+    'Frontend: lkpdtiktok.pages.dev',
+    ui.ButtonSet.OK
+  );
+}
+
 // === BOILERPLATE: WEB APP ENTRY POINT & HTTP API ===
 function doGet(e) {
   if (e && e.parameter && e.parameter.action) {
@@ -556,7 +597,9 @@ function withScriptLock_(callback) {
   const lock = LockService.getScriptLock();
   lock.waitLock(APP_CONFIG.LOCK_TIMEOUT_MS);
   try {
-    return callback();
+    const res = callback();
+    SpreadsheetApp.flush();
+    return res;
   } finally {
     lock.releaseLock();
   }
